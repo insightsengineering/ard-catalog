@@ -1,0 +1,29 @@
+---
+title: "Utilizing the {cards} and {cardx} packages in the QC Workflow"
+engine: knitr
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Overview
+
+The current procedure for generating clinical reporting tables employs
+NEST packages such as {rtables}, {tern} and {chevron}. These packages
+create complex table structures and generate statistics that should be
+programmatically compared.
+
+In this document, we will showcase how the {cards} and {cardx} packages
+can be used to QC common outputs generated using NEST paackages.
+
+[`r fontawesome::fa("github")`
+{cards}](https://github.com/insightsengineering/cards)
+
+[`r fontawesome::fa("github")`
+{rtables}](https://github.com/insightsengineering/rtables)
+
+[`r fontawesome::fa("github")`
+{tern}](https://github.com/insightsengineering/tern)
+
+[`r fontawesome::fa("github")`
+{tlg-catalog}](https://github.com/insightsengineering/tlg-catalog)

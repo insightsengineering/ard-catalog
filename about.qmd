@@ -1,0 +1,5 @@
+# QCing with {cards} and {cardx}
+
+This catalog is meant to demo the use of ARD-centric packages within the 
+Quality Control workflow. Verification of statistics generated with NEST packages (such as: {tern}, {rtables}, {chevron})
+can be verified by reproducing the tables using Analysis Results Dataset (ARDs).
