@@ -1,0 +1,19 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Utilizing the {cards} and {cardx} packages in the QC Workflow",
+    "section": "",
+    "text": "Overview\nThe current procedure for generating clinical reporting tables employs NEST packages such as {rtables}, {tern} and {chevron}. These packages create complex table structures and generate statistics that should be programmatically compared.\nIn this document, we will showcase how the {cards} and {cardx} packages can be used to QC common outputs generated using NEST paackages.\n {cards}\n {rtables}\n {tern}\n {tlg-catalog}",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "QCing with {cards} and {cardx}",
+    "section": "",
+    "text": "QCing with {cards} and {cardx}\nThis catalog is meant to demo the use of ARD-centric packages within the Quality Control workflow. Verification of statistics generated with NEST packages (such as: {tern}, {rtables}, {chevron}) can be verified by reproducing the tables using Analysis Results Dataset (ARDs)."
+  }
+]
