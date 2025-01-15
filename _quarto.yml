@@ -1,0 +1,39 @@
+project:
+  type: website
+  output-dir: public
+  render:
+    - "*.qmd"
+
+website:
+  page-navigation: true
+  title: "Implementing {cards} in the QC Workflow"
+  description: "Background on {cards}, {cardx}, {gtsummary}"
+  favicon: "images/nest_cards_logo.png"
+
+  repo-url: https://github.com/insightsengineering/ard-catalog
+  repo-actions: [edit, issue]
+
+  page-footer:
+    left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
+    background: "#98d4c1"
+
+  sidebar:
+    background: "#98d4c1"
+    logo: "images/nest_cards_logo.png"
+    pinned: true
+    align: center
+    tools:
+      - icon: github
+        href: https://github.com/insightsengineering/ard-catalog
+        text: GitHub
+    style: docked
+    contents:
+     - href: index.qmd
+       text: Home
+
+format:
+  html:
+    theme: cosmo
+
+
+editor: source
