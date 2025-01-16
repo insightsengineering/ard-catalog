@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Implementing {cards} in the QC Workflow</title>
+<title>Implementing {cards} in the QC Workflow - Demographics and Baseline Characteristics (DMT01)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -29,6 +63,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./02-AET02.html" rel="next">
+<link href="./index.html" rel="prev">
 <link href="./images/ard-c-logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -70,7 +106,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar docked fullcontent">
+<body class="nav-sidebar docked">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -79,7 +115,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-DMT01.html">Demographics Table</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -89,7 +125,7 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -115,7 +151,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01-DMT01.html" class="sidebar-item-text sidebar-link">
+  <a href="./01-DMT01.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Demographics Table</span></a>
   </div>
 </li>
@@ -132,14 +168,170 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Demographics and Baseline Characteristics (DMT01)</h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-page-right">
 
-<section id="qcing-with-cards-and-cardx" class="level1">
-<h1>QCing with {cards} and {cardx}</h1>
-<p>This catalog is meant to demo the use of ARD-centric packages within the Quality Control workflow. Verification of statistics generated with NEST packages (such as: {tern}, {rtables}, {chevron}) can be verified by reproducing the tables using Analysis Results Dataset (ARDs).</p>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="building-a-dmt01-table-using-the-chevron-package" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-dmt01-table-using-the-chevron-package">Building a DMT01 table using the {chevron} package</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a table using the chevron package </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dmt01 <span class="ot">&lt;-</span> chevron<span class="sc">::</span><span class="fu">run</span>(dmt01, syn_data)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dmt01</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                       A: Drug X    B: Placebo   C: Combination   All Patients
+                                         (N=15)       (N=15)         (N=15)          (N=45)   
+  ————————————————————————————————————————————————————————————————————————————————————————————
+  Age (yr)                                                                                    
+    n                                      15           15             15              45     
+    Mean (SD)                          31.3 (5.3)   35.1 (9.0)     36.6 (6.4)      34.3 (7.3) 
+    Median                                31.0         35.0           35.0            34.0    
+    Min - Max                           24 - 40      24 - 57        24 - 49         24 - 57   
+  Age Group                                                                                   
+    n                                      15           15             15              45     
+    &lt;65                                15 (100%)    15 (100%)      15 (100%)       45 (100%)  
+  Sex                                                                                         
+    n                                      15           15             15              45     
+    Male                               3 (20.0%)    7 (46.7%)      5 (33.3%)       15 (33.3%) 
+    Female                             12 (80.0%)   8 (53.3%)      10 (66.7%)      30 (66.7%) 
+  Ethnicity                                                                                   
+    n                                      15           15             15              45     
+    HISPANIC OR LATINO                 2 (13.3%)        0              0            2 (4.4%)  
+    NOT HISPANIC OR LATINO             13 (86.7%)   15 (100%)      13 (86.7%)      41 (91.1%) 
+    NOT REPORTED                           0            0          2 (13.3%)        2 (4.4%)  
+  RACE                                                                                        
+    n                                      15           15             15              45     
+    AMERICAN INDIAN OR ALASKA NATIVE       0        2 (13.3%)       1 (6.7%)        3 (6.7%)  
+    ASIAN                              8 (53.3%)    10 (66.7%)     8 (53.3%)       26 (57.8%) 
+    BLACK OR AFRICAN AMERICAN          4 (26.7%)     1 (6.7%)      4 (26.7%)       9 (20.0%)  
+    WHITE                              3 (20.0%)    2 (13.3%)      2 (13.3%)       7 (15.6%)  </code></pre>
+</div>
+</div>
+<p>We can use {rtables} functionality to flatten this table into a data frame.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> rtables<span class="sc">::</span><span class="fu">as_result_df</span>(dmt01)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>results [, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">8</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         label_name             A: Drug X
+1                                 n                    15
+2                         Mean (SD)   31.333333, 5.259911
+3                            Median                    31
+4                         Min - Max                24, 40
+5                                 n                    15
+6                               &lt;65                 15, 1
+7                                 n                    15
+8                              Male              3.0, 0.2
+9                            Female             12.0, 0.8
+10                                n                    15
+11               HISPANIC OR LATINO  2.0000000, 0.1333333
+12           NOT HISPANIC OR LATINO 13.0000000, 0.8666667
+13                     NOT REPORTED                  0, 0
+14                                n                    15
+15 AMERICAN INDIAN OR ALASKA NATIVE                  0, 0
+16                            ASIAN  8.0000000, 0.5333333
+17        BLACK OR AFRICAN AMERICAN  4.0000000, 0.2666667
+18                            WHITE              3.0, 0.2
+               B: Placebo         C: Combination           All Patients
+1                      15                     15                     45
+2     35.066667, 9.027471    36.600000, 6.445375    34.333333, 7.276987
+3                      35                     35                     34
+4                  24, 57                 24, 49                 24, 57
+5                      15                     15                     45
+6                   15, 1                  15, 1                  45, 1
+7                      15                     15                     45
+8    7.0000000, 0.4666667   5.0000000, 0.3333333  15.0000000, 0.3333333
+9    8.0000000, 0.5333333  10.0000000, 0.6666667  30.0000000, 0.6666667
+10                     15                     15                     45
+11                   0, 0                   0, 0 2.00000000, 0.04444444
+12                  15, 1  13.0000000, 0.8666667  41.0000000, 0.9111111
+13                   0, 0   2.0000000, 0.1333333 2.00000000, 0.04444444
+14                     15                     15                     45
+15   2.0000000, 0.1333333 1.00000000, 0.06666667 3.00000000, 0.06666667
+16  10.0000000, 0.6666667   8.0000000, 0.5333333  26.0000000, 0.5777778
+17 1.00000000, 0.06666667   4.0000000, 0.2666667               9.0, 0.2
+18   2.0000000, 0.1333333   2.0000000, 0.1333333   7.0000000, 0.1555556</code></pre>
+</div>
+</div>
+</section>
+<section id="building-an-dmt01-table-using-the-cards-package" class="level2">
+<h2 class="anchored" data-anchor-id="building-an-dmt01-table-using-the-cards-package">Building an DMT01 table using the {cards} package</h2>
+<p>In this example below we create the same demographics table using the {gtsummary} package, with the same data set provided by the {chevron} package.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  syn_data<span class="sc">$</span>adsl<span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_summary</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> ARM,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">list</span>(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">"{n} / {N} ({p}%)"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">missing =</span> <span class="st">"no"</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> <span class="fu">c</span>(<span class="st">"AGE"</span>, <span class="st">"AGEGR1"</span>, <span class="st">"ARM"</span>, <span class="st">"SEX"</span>, <span class="st">"ETHNIC"</span>, <span class="st">"RACE"</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ard <span class="ot">&lt;-</span> tbl <span class="sc">|&gt;</span> <span class="fu">gather_ard</span>()</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ard<span class="sc">$</span>tbl_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>{cards} data frame: 216 x 12</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   group1 group1_level variable variable_level stat_name stat_label  stat
+1     ARM    A: Drug X      SEX              F         n          n    12
+2     ARM    A: Drug X      SEX              F         N          N    15
+3     ARM    A: Drug X      SEX              F         p          %   0.8
+4     ARM    B: Place…      SEX              F         n          n     8
+5     ARM    B: Place…      SEX              F         N          N    15
+6     ARM    B: Place…      SEX              F         p          % 0.533
+7     ARM    C: Combi…      SEX              F         n          n    10
+8     ARM    C: Combi…      SEX              F         N          N    15
+9     ARM    C: Combi…      SEX              F         p          % 0.667
+10    ARM    A: Drug X      SEX              M         n          n     3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ 206 more rows</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ Use `print(n = ...)` to see more rows</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ 5 more variables: context, fmt_fn, warning, error, gts_column</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
+<p>Upon comparing the two outputs, it’s evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.</p>
 
 
 </section>
@@ -532,6 +724,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation column-page-right">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link  aria-label=" home"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Home</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02-AET02.html" class="pagination-link" aria-label="Adverse Events Table">
+        <span class="nav-page-text">Adverse Events Table</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
@@ -540,7 +744,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/insightsengineering/ard-catalog/edit/main/about.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/insightsengineering/ard-catalog/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/insightsengineering/ard-catalog/edit/main/01-DMT01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/insightsengineering/ard-catalog/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

@@ -1,0 +1,58 @@
+---
+title: "Demographics and Baseline Characteristics (DMT01)"
+editor: source
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+---
+
+## Building a DMT01 table using the {chevron} package
+
+
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+library(chevron)
+
+# Create a table using the chevron package 
+dmt01 <- chevron::run(dmt01, syn_data)
+dmt01
+
+```
+
+We can use {rtables} functionality to flatten this table into a data frame.
+```{r}
+results <- rtables::as_result_df(dmt01)
+results [, -c(1:4,6:8)]
+```
+
+
+## Building an DMT01 table using the {cards} package
+
+In this example below we create the same demographics table using the {gtsummary} package, with the same data set provided by the {chevron} package.
+
+```{r}
+#| code-summary: "Show the code"
+library(gtsummary)
+
+tbl <-
+  syn_data$adsl|>
+  gtsummary::tbl_summary(
+  by = ARM,
+  statistic = list(
+    all_continuous() ~ "{mean} ({sd})",
+    all_categorical() ~ "{n} / {N} ({p}%)"
+  ),
+  missing = "no",
+  include = c("AGE", "AGEGR1", "ARM", "SEX", "ETHNIC", "RACE")
+)
+
+ard <- tbl |> gather_ard()
+
+ard$tbl_summary
+```
+
+## Comparing Outputs
+Upon comparing the two outputs, it's evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.

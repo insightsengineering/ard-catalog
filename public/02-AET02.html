@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Implementing {cards} in the QC Workflow</title>
+<title>Implementing {cards} in the QC Workflow - Adverse Events (AET02)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -29,6 +63,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./01-DMT01.html" rel="prev">
 <link href="./images/ard-c-logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -70,7 +105,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar docked fullcontent">
+<body class="nav-sidebar docked">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -79,7 +114,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-AET02.html">Adverse Events Table</a></li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -89,7 +124,7 @@ ul.task-list li input[type="checkbox"] {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
@@ -121,7 +156,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-AET02.html" class="sidebar-item-text sidebar-link">
+  <a href="./02-AET02.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Adverse Events Table</span></a>
   </div>
 </li>
@@ -132,14 +167,89 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-right" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Adverse Events (AET02)</h1>
+</div>
 
 
 
+<div class="quarto-title-meta column-page-right">
 
-<section id="qcing-with-cards-and-cardx" class="level1">
-<h1>QCing with {cards} and {cardx}</h1>
-<p>This catalog is meant to demo the use of ARD-centric packages within the Quality Control workflow. Verification of statistics generated with NEST packages (such as: {tern}, {rtables}, {chevron}) can be verified by reproducing the tables using Analysis Results Dataset (ARDs).</p>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="building-an-aet02-table-using-the-chevron-package" class="level2">
+<h2 class="anchored" data-anchor-id="building-an-aet02-table-using-the-chevron-package">Building an AET02 table using the {chevron} package</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>aet02 <span class="ot">&lt;-</span> <span class="fu">run</span>(aet02, syn_data)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>aet02</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  MedDRA System Organ Class                                    A: Drug X    B: Placebo   C: Combination
+    MedDRA Preferred Term                                        (N=15)       (N=15)         (N=15)    
+  —————————————————————————————————————————————————————————————————————————————————————————————————————
+  Total number of patients with at least one adverse event     13 (86.7%)   14 (93.3%)     15 (100%)   
+  Overall total number of events                                   58           59             99      
+  cl B.2                                                                                               
+    Total number of patients with at least one adverse event   11 (73.3%)   8 (53.3%)      10 (66.7%)  
+    Total number of events                                         18           15             20      
+    dcd B.2.2.3.1                                              8 (53.3%)    6 (40.0%)      7 (46.7%)   
+    dcd B.2.1.2.1                                              5 (33.3%)    6 (40.0%)      5 (33.3%)   
+  cl D.1                                                                                               
+    Total number of patients with at least one adverse event   9 (60.0%)    5 (33.3%)      11 (73.3%)  
+    Total number of events                                         13           9              19      
+    dcd D.1.1.1.1                                              4 (26.7%)    4 (26.7%)      7 (46.7%)   
+    dcd D.1.1.4.2                                              6 (40.0%)    2 (13.3%)      7 (46.7%)   
+  cl A.1                                                                                               
+    Total number of patients with at least one adverse event   7 (46.7%)    6 (40.0%)      10 (66.7%)  
+    Total number of events                                         8            11             16      
+    dcd A.1.1.1.2                                              5 (33.3%)    6 (40.0%)      6 (40.0%)   
+    dcd A.1.1.1.1                                              3 (20.0%)     1 (6.7%)      6 (40.0%)   
+  cl B.1                                                                                               
+    Total number of patients with at least one adverse event   5 (33.3%)    6 (40.0%)      8 (53.3%)   
+    Total number of events                                         6            6              12      
+    dcd B.1.1.1.1                                              5 (33.3%)    6 (40.0%)      8 (53.3%)   
+  cl C.2                                                                                               
+    Total number of patients with at least one adverse event   6 (40.0%)    4 (26.7%)      8 (53.3%)   
+    Total number of events                                         6            4              12      
+    dcd C.2.1.2.1                                              6 (40.0%)    4 (26.7%)      8 (53.3%)   
+  cl D.2                                                                                               
+    Total number of patients with at least one adverse event   2 (13.3%)    5 (33.3%)      7 (46.7%)   
+    Total number of events                                         3            5              10      
+    dcd D.2.1.5.3                                              2 (13.3%)    5 (33.3%)      7 (46.7%)   
+  cl C.1                                                                                               
+    Total number of patients with at least one adverse event   4 (26.7%)    4 (26.7%)      5 (33.3%)   
+    Total number of events                                         4            9              10      
+    dcd C.1.1.1.3                                              4 (26.7%)    4 (26.7%)      5 (33.3%)   </code></pre>
+</div>
+</div>
+</section>
+<section id="building-an-aet02-table-using-the-cards-package" class="level2">
+<h2 class="anchored" data-anchor-id="building-an-aet02-table-using-the-cards-package">Building an AET02 table using the {cards} package</h2>
+<p>In this example below we perform different data pre-processing for the different ARDs we want to create. We then generate separate ARDs for the different sections of the AET02 table and then merge them all together.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="comparing-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
+<p>Upon comparing the two outputs, it’s evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.</p>
 
 
 </section>
@@ -532,6 +642,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation column-page-right">
+  <div class="nav-page nav-page-previous">
+      <a href="./01-DMT01.html" class="pagination-link  aria-label=" demographics="" table"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Demographics Table</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
@@ -540,7 +659,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/insightsengineering/ard-catalog/edit/main/about.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/insightsengineering/ard-catalog/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/insightsengineering/ard-catalog/edit/main/02-AET02.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/insightsengineering/ard-catalog/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

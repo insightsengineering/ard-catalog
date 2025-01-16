@@ -1,0 +1,38 @@
+---
+title: "Adverse Events (AET02)"
+editor: source
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+---
+
+## Building an AET02 table using the {chevron} package
+
+
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+
+library(chevron)
+aet02 <- run(aet02, syn_data)
+aet02
+
+```
+
+
+## Building an AET02 table using the {cards} package
+
+In this example below we perform different data pre-processing for the different ARDs we want to create. 
+We then generate separate ARDs for the different sections of the AET02 table and then merge them all together. 
+
+```{r}
+#| code-summary: "Show the code"
+
+library(cards)
+
+```
+
+## Comparing Outputs
+Upon comparing the two outputs, it's evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.
