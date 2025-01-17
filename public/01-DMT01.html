@@ -284,53 +284,120 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">&lt;-</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  syn_data<span class="sc">$</span>adsl<span class="sc">|&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  gtsummary<span class="sc">::</span><span class="fu">tbl_summary</span>(</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> ARM,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">list</span>(</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">"{n} / {N} ({p}%)"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">missing =</span> <span class="st">"no"</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> <span class="fu">c</span>(<span class="st">"AGE"</span>, <span class="st">"AGEGR1"</span>, <span class="st">"ARM"</span>, <span class="st">"SEX"</span>, <span class="st">"ETHNIC"</span>, <span class="st">"RACE"</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ard <span class="ot">&lt;-</span> tbl <span class="sc">|&gt;</span> <span class="fu">gather_ard</span>()</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ard<span class="sc">$</span>tbl_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># build ARDs that calculate relevant statistics for continuous and categorical variables.</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ards <span class="ot">&lt;-</span> <span class="fu">bind_ard</span>(<span class="fu">ard_continuous</span>(syn_data<span class="sc">$</span>adsl, <span class="at">variables =</span> <span class="fu">c</span>(AGE), <span class="at">by =</span> ARM),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">ard_categorical</span>(syn_data<span class="sc">$</span>adsl, <span class="at">variables =</span> <span class="fu">c</span>(AGEGR1, SEX, ETHNIC, RACE), <span class="at">by =</span> ARM))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="comparing-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality in means and sd</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mean_tbl <span class="ot">&lt;-</span> results <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(label_name <span class="sc">%in%</span> <span class="st">"Mean (SD)"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span>purrr<span class="sc">::</span><span class="fu">map_chr</span>(.x, <span class="sc">~</span><span class="fu">paste</span>(.x, <span class="at">collapse =</span> <span class="st">", "</span>))))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>mean_ard <span class="ot">&lt;-</span> ards <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Mean(SD)"</span> <span class="ot">=</span> <span class="fu">paste</span>(stat[stat_name <span class="sc">==</span> <span class="st">"mean"</span>], <span class="st">"("</span>, stat[stat_name <span class="sc">==</span> <span class="st">"sd"</span>], <span class="st">")"</span>, <span class="at">sep =</span> <span class="st">""</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>{cards} data frame: 216 x 12</code></pre>
+<pre><code>Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
+dplyr 1.1.0.
+ℹ Please use `reframe()` instead.
+ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()`
+  always returns an ungrouped data frame and adjust accordingly.</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mean_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           A: Drug X                         B: Placebo
+1 31.3333333333333, 5.25991127935317 35.0666666666667, 9.02747130126915
+         C: Combination
+1 36.6, 6.4453748644169</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mean_ard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 1
+  `Mean(SD)`                        
+  &lt;chr&gt;                             
+1 31.3333333333333(5.25991127935317)
+2 35.0666666666667(9.02747130126915)
+3 36.6(6.4453748644169)             </code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality in n, N and percent</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>cat_tbl <span class="ot">&lt;-</span> results <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(avar_name <span class="sc">%in%</span> <span class="st">"RACE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span>purrr<span class="sc">::</span><span class="fu">map_chr</span>(.x, <span class="sc">~</span><span class="fu">paste</span>(.x, <span class="at">collapse =</span> <span class="st">", "</span>))))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>cat_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  avar_name            A: Drug X            B: Placebo        C: Combination
+1      RACE                   15                    15                    15
+2      RACE                 0, 0  2, 0.133333333333333 1, 0.0666666666666667
+3      RACE 8, 0.533333333333333 10, 0.666666666666667  8, 0.533333333333333
+4      RACE 4, 0.266666666666667 1, 0.0666666666666667  4, 0.266666666666667
+5      RACE               3, 0.2  2, 0.133333333333333  2, 0.133333333333333</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cat_ard <span class="ot">&lt;-</span> ards <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"RACE"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"N"</span>, <span class="st">"p"</span>)) </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>cat_ard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>{cards} data frame: 36 x 11</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   group1 group1_level variable variable_level stat_name stat_label  stat
-1     ARM    A: Drug X      SEX              F         n          n    12
-2     ARM    A: Drug X      SEX              F         N          N    15
-3     ARM    A: Drug X      SEX              F         p          %   0.8
-4     ARM    B: Place…      SEX              F         n          n     8
-5     ARM    B: Place…      SEX              F         N          N    15
-6     ARM    B: Place…      SEX              F         p          % 0.533
-7     ARM    C: Combi…      SEX              F         n          n    10
-8     ARM    C: Combi…      SEX              F         N          N    15
-9     ARM    C: Combi…      SEX              F         p          % 0.667
-10    ARM    A: Drug X      SEX              M         n          n     3</code></pre>
+1     ARM    A: Drug X     RACE      AMERICAN…         n          n     0
+2     ARM    A: Drug X     RACE      AMERICAN…         N          N    15
+3     ARM    A: Drug X     RACE      AMERICAN…         p          %     0
+4     ARM    B: Place…     RACE      AMERICAN…         n          n     2
+5     ARM    B: Place…     RACE      AMERICAN…         N          N    15
+6     ARM    B: Place…     RACE      AMERICAN…         p          % 0.133
+7     ARM    C: Combi…     RACE      AMERICAN…         n          n     1
+8     ARM    C: Combi…     RACE      AMERICAN…         N          N    15
+9     ARM    C: Combi…     RACE      AMERICAN…         p          % 0.067
+10    ARM    A: Drug X     RACE          ASIAN         n          n     8</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ 206 more rows</code></pre>
+<pre><code>ℹ 26 more rows</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ℹ Use `print(n = ...)` to see more rows</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>ℹ 5 more variables: context, fmt_fn, warning, error, gts_column</code></pre>
+<pre><code>ℹ 4 more variables: context, fmt_fn, warning, error</code></pre>
 </div>
 </div>
-</section>
-<section id="comparing-outputs" class="level2">
-<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
 <p>Upon comparing the two outputs, it’s evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.</p>
 
 

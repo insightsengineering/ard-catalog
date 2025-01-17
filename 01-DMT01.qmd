@@ -35,24 +35,52 @@ In this example below we create the same demographics table using the {gtsummary
 
 ```{r}
 #| code-summary: "Show the code"
-library(gtsummary)
+library(cards)
 
-tbl <-
-  syn_data$adsl|>
-  gtsummary::tbl_summary(
-  by = ARM,
-  statistic = list(
-    all_continuous() ~ "{mean} ({sd})",
-    all_categorical() ~ "{n} / {N} ({p}%)"
-  ),
-  missing = "no",
-  include = c("AGE", "AGEGR1", "ARM", "SEX", "ETHNIC", "RACE")
-)
+# build ARDs that calculate relevant statistics for continuous and categorical variables.
 
-ard <- tbl |> gather_ard()
-
-ard$tbl_summary
+ards <- bind_ard(ard_continuous(syn_data$adsl, variables = c(AGE), by = ARM),
+                 ard_categorical(syn_data$adsl, variables = c(AGEGR1, SEX, ETHNIC, RACE), by = ARM))
 ```
 
 ## Comparing Outputs
+
+```{r}
+# Equality in means and sd
+
+mean_tbl <- results |>
+  dplyr::filter(label_name %in% "Mean (SD)") |>
+  dplyr::select(9:11) |>
+  dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))
+
+mean_ard <- ards %>%
+  dplyr::filter(stat_name %in% c("mean", "sd")) %>%
+  dplyr::summarise(
+    "Mean(SD)" = paste(stat[stat_name == "mean"], "(", stat[stat_name == "sd"], ")", sep = ""))
+
+mean_tbl
+```
+```{r}
+mean_ard
+```
+
+```{r}
+# Equality in n, N and percent
+
+cat_tbl <- results |>
+  dplyr::filter(avar_name %in% "RACE") |>
+  dplyr::select(c(3,9:11)) |>
+  dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))
+
+cat_tbl
+```
+
+```{r}
+cat_ard <- ards %>%
+  dplyr::filter(variable %in% c("RACE")) |>
+  dplyr::filter(stat_name %in% c("n", "N", "p")) 
+
+cat_ard
+```
+
 Upon comparing the two outputs, it's evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.
