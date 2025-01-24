@@ -27,13 +27,21 @@ website:
         href: https://github.com/insightsengineering/ard-catalog
         text: GitHub
     style: docked
+    collapse-level: 1
     contents:
-     - href: index.qmd
-       text: Home
-     - href: 01-DMT01.qmd
-       text: Demographics Table
-     - href: 02-AET02.qmd
-       text: Adverse Events Table
+    - href: index.qmd
+      text: Home
+    - section: "QCing with ARDS"
+      href: 01-QCing.qmd
+      contents:
+        - 01-QCing.qmd
+    - section: "ard-catalog"
+      contents:
+        - href: 02-DMT01.qmd
+          text: Demographics Table
+        - href: 03-AET02.qmd
+          text: Adverse Events Table
+
 
 format:
   html:

@@ -1,0 +1,104 @@
+---
+title: "Demographics and Baseline Characteristics (DMT01)"
+editor: source
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: scroll 
+    df-print: kable
+---
+
+## Building a DMT01 table using the {chevron} package
+
+```{css, echo = FALSE}
+.output {
+max-width: 800px;
+overflow-x: scroll;
+}
+```
+
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+library(chevron)
+
+# Create a table using the chevron package 
+dmt01 <- chevron::run(dmt01, syn_data)
+dmt01
+
+```
+
+We can use {rtables} functionality to flatten this table into a data frame.
+
+```{r}
+#| class: output
+results <- rtables::as_result_df(dmt01, make_ard = TRUE)
+results [, -c(1:4,6:8)]
+```
+
+## Building DMT01 statstics using the {cards} package
+
+In this example below, we calculate the same summary statistics usings the {cards} package with the same data set provided by the {chevron} package.
+
+```{r}
+#| code-summary: "Show the code"
+library(cards)
+
+# build ARDs that calculate relevant statistics for continuous and categorical variables.
+
+ards <- ard_stack(syn_data$adsl, ard_continuous(variables = c(AGE)),
+                 ard_categorical(variables = c(AGEGR1, SEX, ETHNIC, RACE)),
+                 .by = "ARM",
+                 .overall = TRUE)
+
+ards
+```
+
+## Comparing Outputs
+
+We can compare the statistics for Mean and SD values for our continuous variable.
+
+```{r}
+# Equality in means and sd
+
+# mean_tbl <- results |>
+#   dplyr::filter(label_name %in% "Mean (SD)") |>
+#   dplyr::select(9:11) |>
+#   dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))
+# 
+# mean_ard <- ards %>%
+#   dplyr::filter(stat_name %in% c("mean", "sd")) %>%
+#   dplyr::summarise(
+#     "Mean(SD)" = paste(stat[stat_name == "mean"], "(", stat[stat_name == "sd"], ")", sep = ""))
+# 
+# mean_tbl
+```
+
+```{r}
+#mean_ard
+```
+
+We can also compare the statistics related to categorical variables (truncated to make it easier to read).
+
+```{r}
+# Equality in n, N and percent
+
+# cat_tbl <- results |>
+#   dplyr::filter(avar_name %in% "RACE") |>
+#   dplyr::select(c(3,9:11)) |>
+#   dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))
+# 
+# cat_tbl
+```
+
+```{r}
+cat_ard <- ards %>%
+  dplyr::filter(variable %in% c("RACE")) |>
+  dplyr::filter(stat_name %in% c("n", "N", "p")) 
+
+cat_ard
+```
+
+Upon comparing the two outputs, it's evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.
