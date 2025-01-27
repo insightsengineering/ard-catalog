@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Implementing {cards} in the QC Workflow - QCing tables with ARDs</title>
+<title>QCing tables with ARDs – Implementing {cards} in the QC Workflow</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -112,13 +112,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-QCing.html">QCing with ARDS</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./images/ard-c-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
@@ -153,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./01-QCing.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">QCing with ARDS</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -168,9 +168,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
  <span class="menu-text">ard-catalog</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -272,12 +272,12 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> rtables<span class="sc">::</span><span class="fu">as_result_df</span>(dmt01, <span class="at">make_ard =</span> <span class="cn">TRUE</span>)</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> rtables<span class="sc">::</span><span class="fu">as_result_df</span>(dmt01, <span class="at">make_ard =</span> <span class="cn">TRUE</span>, <span class="at">expand_colnames =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="kable-table">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 18%">
 <col style="width: 12%">
@@ -302,47 +302,47 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">AAGE</td>
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">n</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">n</td>
 <td style="text-align: right;">15.000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A: Drug X</td>
 <td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">mean_sd</td>
 <td style="text-align: left;">Mean (SD)</td>
-<td style="text-align: left;">Mean (SD)</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">mean</td>
 <td style="text-align: right;">31.333333</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">A: Drug X</td>
 <td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">mean_sd</td>
 <td style="text-align: left;">Mean (SD)</td>
-<td style="text-align: left;">Mean (SD)</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">sd</td>
 <td style="text-align: right;">5.259911</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A: Drug X</td>
 <td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">median</td>
 <td style="text-align: left;">Median</td>
-<td style="text-align: left;">Median</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">median</td>
 <td style="text-align: right;">31.000000</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">A: Drug X</td>
 <td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">range</td>
 <td style="text-align: left;">Min - Max</td>
-<td style="text-align: left;">Min - Max</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">min</td>
 <td style="text-align: right;">24.000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A: Drug X</td>
 <td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">range</td>
 <td style="text-align: left;">Min - Max</td>
-<td style="text-align: left;">Min - Max</td>
-<td style="text-align: left;">NA</td>
+<td style="text-align: left;">max</td>
 <td style="text-align: right;">40.000000</td>
 </tr>
 </tbody>
@@ -371,7 +371,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 </details>
 <div class="cell-output-display">
 <div class="kable-table">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 16%">
 <col style="width: 11%">
@@ -453,123 +453,1309 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 </div>
 </div>
 </section>
-<section id="visualize-using-a-side-by-side-comparison" class="level4">
-<h4 class="anchored" data-anchor-id="visualize-using-a-side-by-side-comparison">Visualize using a side-by-side comparison</h4>
-<p>Viewing both the ARD result and the flattened data frame, it is clear the results are comparable. With this dataframe structure - values can be programmatically compared as well (<code>all.equal()</code>, <code>identical()</code>, etc.)</p>
+<section id="visualize-statistics-comparison" class="level4">
+<h4 class="anchored" data-anchor-id="visualize-statistics-comparison">Visualize statistics comparison</h4>
+<p>With both data frames containing similar key variables (group_level, variable_label, etc.), statistics can be compared side-by-side by combining the tables.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> results[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">6</span>,<span class="dv">8</span>)]</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>t2 <span class="ot">&lt;-</span> ards [<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>)]</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">list</span>(t1, t2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rework the rtables output to match ----</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the group2 to group1, rename stat_name from n to N</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>reformat <span class="ot">&lt;-</span> results <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">7</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">"group1"</span> <span class="ot">=</span> group2, <span class="st">"group1_level"</span> <span class="ot">=</span> group2_level, <span class="st">"stat_rtables"</span> <span class="ot">=</span> stat) <span class="sc">|&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">variable_level =</span> <span class="fu">sub</span>(<span class="st">"^[^.]*</span><span class="sc">\\</span><span class="st">."</span>, <span class="st">""</span>, variable_level)) <span class="sc">|&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">stat_name =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(stat_name, </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"n"</span> <span class="ot">=</span> <span class="st">"N"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"count"</span> <span class="ot">=</span> <span class="st">"n"</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">variable =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(variable, </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"AAGE"</span> <span class="ot">=</span> <span class="st">"AGE"</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">variable_level =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(variable_level, </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Male"</span> <span class="ot">=</span> <span class="st">"M"</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"Female"</span> <span class="ot">=</span> <span class="st">"F"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">variable_level =</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    variable_level <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"mean_sd"</span>, <span class="st">"median"</span>, <span class="st">"range"</span>, <span class="st">"n"</span>) <span class="sc">~</span> <span class="cn">NA_character_</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> variable_level</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>ards2 <span class="ot">&lt;-</span> ards <span class="sc">|&gt;</span> </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                                             <span class="sc">~</span> <span class="cf">if</span> (<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                                               <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]])</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                                             } <span class="cf">else</span> {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                                               <span class="cn">NA_character_</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                                             })) <span class="sc">|&gt;</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">variable_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(variable_level, </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                                             <span class="sc">~</span> <span class="cf">if</span> (<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>                                               <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]])</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                                             } <span class="cf">else</span> {</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>                                               <span class="cn">NA_character_</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>                                             })) <span class="sc">|&gt;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">group1 =</span> dplyr<span class="sc">::</span><span class="fu">coalesce</span>(group1, <span class="st">"ARM"</span>),</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>                <span class="at">group1_level =</span> dplyr<span class="sc">::</span><span class="fu">coalesce</span>(group1_level, <span class="st">"All Patients"</span>))</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co"># perform a left join</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>compare <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">left_join</span>(ards2, reformat, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>))</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>compare[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<table class="kable_wrapper">
-<tbody>
-<tr>
-<td>
-<table class="table table-sm table-striped small">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 15%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 9%">
+<col style="width: 13%">
+</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">group2_level</th>
+<th style="text-align: left;">group1</th>
+<th style="text-align: left;">group1_level</th>
 <th style="text-align: left;">variable</th>
-<th style="text-align: left;">variable_label</th>
-<th style="text-align: right;">stat</th>
+<th style="text-align: left;">variable_level</th>
+<th style="text-align: left;">context</th>
+<th style="text-align: left;">stat_name</th>
+<th style="text-align: left;">stat_label</th>
+<th style="text-align: left;">stat</th>
+<th style="text-align: right;">stat_rtables</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: left;">n</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">15</td>
 <td style="text-align: right;">15.000000</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">31.33333</td>
 <td style="text-align: right;">31.333333</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: left;">Mean (SD)</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: left;">SD</td>
+<td style="text-align: left;">5.259911</td>
 <td style="text-align: right;">5.259911</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">median</td>
 <td style="text-align: left;">Median</td>
+<td style="text-align: left;">31</td>
 <td style="text-align: right;">31.000000</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: left;">Min - Max</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: left;">Min</td>
+<td style="text-align: left;">24</td>
 <td style="text-align: right;">24.000000</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
 <td style="text-align: left;">A: Drug X</td>
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: left;">Min - Max</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">max</td>
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;">40</td>
 <td style="text-align: right;">40.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">35.06667</td>
+<td style="text-align: right;">35.066667</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: left;">SD</td>
+<td style="text-align: left;">9.027471</td>
+<td style="text-align: right;">9.027471</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">median</td>
+<td style="text-align: left;">Median</td>
+<td style="text-align: left;">35</td>
+<td style="text-align: right;">35.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: left;">Min</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: right;">24.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">max</td>
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;">57</td>
+<td style="text-align: right;">57.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">36.6</td>
+<td style="text-align: right;">36.600000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: left;">SD</td>
+<td style="text-align: left;">6.445375</td>
+<td style="text-align: right;">6.445375</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">median</td>
+<td style="text-align: left;">Median</td>
+<td style="text-align: left;">35</td>
+<td style="text-align: right;">35.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: left;">Min</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: right;">24.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">max</td>
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;">49</td>
+<td style="text-align: right;">49.000000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: left;">45</td>
+<td style="text-align: right;">45.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">AGE</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">continuous</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Mean</td>
+<td style="text-align: left;">34.33333</td>
+<td style="text-align: right;">34.333333</td>
 </tr>
 </tbody>
 </table>
-</td>
-<td>
-<table class="table table-sm table-striped small">
+</div>
+</div>
+</div>
+</section>
+<section id="compare-programmatically" class="level4">
+<h4 class="anchored" data-anchor-id="compare-programmatically">Compare programmatically</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">na.omit</span>(compare) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">columns_match =</span> <span class="st">"stat"</span> <span class="sc">==</span> <span class="st">"stat_rtables"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 11%">
+<col style="width: 6%">
+<col style="width: 24%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 10%">
+</colgroup>
 <thead>
 <tr class="header">
+<th style="text-align: left;">group1</th>
 <th style="text-align: left;">group1_level</th>
 <th style="text-align: left;">variable</th>
+<th style="text-align: left;">variable_level</th>
+<th style="text-align: left;">context</th>
+<th style="text-align: left;">stat_name</th>
 <th style="text-align: left;">stat_label</th>
 <th style="text-align: left;">stat</th>
+<th style="text-align: right;">stat_rtables</th>
+<th style="text-align: left;">columns_match</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">N</td>
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
+<td style="text-align: right;">15.0000000</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">Mean</td>
-<td style="text-align: left;">31.33333</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">SD</td>
-<td style="text-align: left;">5.259911</td>
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.0000000</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">Median</td>
-<td style="text-align: left;">31</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">Min</td>
-<td style="text-align: left;">24</td>
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.0000000</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
-<td style="text-align: left;">AGE</td>
-<td style="text-align: left;">Max</td>
-<td style="text-align: left;">40</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">45</td>
+<td style="text-align: right;">45.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">AGEGR1</td>
+<td style="text-align: left;">&lt;65</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: right;">12.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.8</td>
+<td style="text-align: right;">0.8000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">3.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.2</td>
+<td style="text-align: right;">0.2000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: right;">8.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.5333333</td>
+<td style="text-align: right;">0.5333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: right;">7.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.4666667</td>
+<td style="text-align: right;">0.4666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: right;">10.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.6666667</td>
+<td style="text-align: right;">0.6666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: right;">5.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.3333333</td>
+<td style="text-align: right;">0.3333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">30</td>
+<td style="text-align: right;">30.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">F</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.6666667</td>
+<td style="text-align: right;">0.6666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">SEX</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.3333333</td>
+<td style="text-align: right;">0.3333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1333333</td>
+<td style="text-align: right;">0.1333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: right;">13.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.8666667</td>
+<td style="text-align: right;">0.8666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: right;">15.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: right;">13.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.8666667</td>
+<td style="text-align: right;">0.8666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1333333</td>
+<td style="text-align: right;">0.1333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.04444444</td>
+<td style="text-align: right;">0.0444444</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">41</td>
+<td style="text-align: right;">41.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT HISPANIC OR LATINO</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.9111111</td>
+<td style="text-align: right;">0.9111111</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">ETHNIC</td>
+<td style="text-align: left;">NOT REPORTED</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.04444444</td>
+<td style="text-align: right;">0.0444444</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: right;">8.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.5333333</td>
+<td style="text-align: right;">0.5333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">4.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.2666667</td>
+<td style="text-align: right;">0.2666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">3.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.2</td>
+<td style="text-align: right;">0.2000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1333333</td>
+<td style="text-align: right;">0.1333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: right;">10.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.6666667</td>
+<td style="text-align: right;">0.6666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.06666667</td>
+<td style="text-align: right;">0.0666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">B: Placebo</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1333333</td>
+<td style="text-align: right;">0.1333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.06666667</td>
+<td style="text-align: right;">0.0666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: right;">8.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.5333333</td>
+<td style="text-align: right;">0.5333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">4.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.2666667</td>
+<td style="text-align: right;">0.2666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">C: Combination</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1333333</td>
+<td style="text-align: right;">0.1333333</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">3.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">AMERICAN INDIAN OR ALASKA NATIVE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.06666667</td>
+<td style="text-align: right;">0.0666667</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">26</td>
+<td style="text-align: right;">26.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">ASIAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.5777778</td>
+<td style="text-align: right;">0.5777778</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: right;">9.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">BLACK OR AFRICAN AMERICAN</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.2</td>
+<td style="text-align: right;">0.2000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: right;">7.0000000</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ARM</td>
+<td style="text-align: left;">All Patients</td>
+<td style="text-align: left;">RACE</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">categorical</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">%</td>
+<td style="text-align: left;">0.1555556</td>
+<td style="text-align: right;">0.1555556</td>
+<td style="text-align: left;">FALSE</td>
 </tr>
 </tbody>
 </table>
-</td>
-</tr>
-</tbody>
-</table>
+</div>
 </div>
 </div>
 
@@ -613,18 +1799,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -656,7 +1831,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -691,7 +1906,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -967,7 +2186,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link  aria-label=" home"="">
+      <a href="./index.html" class="pagination-link" aria-label="Home">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Home</span>
       </a>          
   </div>
