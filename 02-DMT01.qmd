@@ -23,6 +23,7 @@ In this example below, we calculate the same summary statistics usings the {card
 ```{r}
 #| code-summary: "Show the code"
 library(cards)
+library(chevron)
 
 # build ARDs that calculate relevant statistics for continuous and categorical variables.
 
@@ -31,6 +32,6 @@ ards <- ard_stack(syn_data$adsl, ard_continuous(variables = c(AGE)),
                  .by = "ARM",
                  .overall = TRUE)
 
-ards
+ards[, 1:8]
 ```
 

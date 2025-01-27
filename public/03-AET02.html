@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Implementing {cards} in the QC Workflow - Adverse Events (AET02)</title>
+<title>Adverse Events (AET02) – Implementing {cards} in the QC Workflow</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -111,13 +111,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-DMT01.html">ard-catalog</a></li><li class="breadcrumb-item"><a href="./03-AET02.html">Adverse Events Table</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -127,7 +127,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./images/ard-c-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
@@ -152,7 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./01-QCing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">QCing with ARDS</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -167,9 +167,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">ard-catalog</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -216,68 +216,371 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="building-an-aet02-table-using-the-chevron-package" class="level2">
-<h2 class="anchored" data-anchor-id="building-an-aet02-table-using-the-chevron-package">Building an AET02 table using the {chevron} package</h2>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>aet02 <span class="ot">&lt;-</span> <span class="fu">run</span>(aet02, syn_data)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>aet02</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>  MedDRA System Organ Class                                    A: Drug X    B: Placebo   C: Combination
-    MedDRA Preferred Term                                        (N=15)       (N=15)         (N=15)    
-  —————————————————————————————————————————————————————————————————————————————————————————————————————
-  Total number of patients with at least one adverse event     13 (86.7%)   14 (93.3%)     15 (100%)   
-  Overall total number of events                                   58           59             99      
-  cl B.2                                                                                               
-    Total number of patients with at least one adverse event   11 (73.3%)   8 (53.3%)      10 (66.7%)  
-    Total number of events                                         18           15             20      
-    dcd B.2.2.3.1                                              8 (53.3%)    6 (40.0%)      7 (46.7%)   
-    dcd B.2.1.2.1                                              5 (33.3%)    6 (40.0%)      5 (33.3%)   
-  cl D.1                                                                                               
-    Total number of patients with at least one adverse event   9 (60.0%)    5 (33.3%)      11 (73.3%)  
-    Total number of events                                         13           9              19      
-    dcd D.1.1.1.1                                              4 (26.7%)    4 (26.7%)      7 (46.7%)   
-    dcd D.1.1.4.2                                              6 (40.0%)    2 (13.3%)      7 (46.7%)   
-  cl A.1                                                                                               
-    Total number of patients with at least one adverse event   7 (46.7%)    6 (40.0%)      10 (66.7%)  
-    Total number of events                                         8            11             16      
-    dcd A.1.1.1.2                                              5 (33.3%)    6 (40.0%)      6 (40.0%)   
-    dcd A.1.1.1.1                                              3 (20.0%)     1 (6.7%)      6 (40.0%)   
-  cl B.1                                                                                               
-    Total number of patients with at least one adverse event   5 (33.3%)    6 (40.0%)      8 (53.3%)   
-    Total number of events                                         6            6              12      
-    dcd B.1.1.1.1                                              5 (33.3%)    6 (40.0%)      8 (53.3%)   
-  cl C.2                                                                                               
-    Total number of patients with at least one adverse event   6 (40.0%)    4 (26.7%)      8 (53.3%)   
-    Total number of events                                         6            4              12      
-    dcd C.2.1.2.1                                              6 (40.0%)    4 (26.7%)      8 (53.3%)   
-  cl D.2                                                                                               
-    Total number of patients with at least one adverse event   2 (13.3%)    5 (33.3%)      7 (46.7%)   
-    Total number of events                                         3            5              10      
-    dcd D.2.1.5.3                                              2 (13.3%)    5 (33.3%)      7 (46.7%)   
-  cl C.1                                                                                               
-    Total number of patients with at least one adverse event   4 (26.7%)    4 (26.7%)      5 (33.3%)   
-    Total number of events                                         4            9              10      
-    dcd C.1.1.1.3                                              4 (26.7%)    4 (26.7%)      5 (33.3%)   </code></pre>
-</div>
-</div>
-</section>
-<section id="building-an-aet02-table-using-the-cards-package" class="level2">
-<h2 class="anchored" data-anchor-id="building-an-aet02-table-using-the-cards-package">Building an AET02 table using the {cards} package</h2>
+<section id="calculaing-aet02-statistics-using-the-cards-package" class="level2">
+<h2 class="anchored" data-anchor-id="calculaing-aet02-statistics-using-the-cards-package">Calculaing AET02 statistics using the {cards} package</h2>
 <p>In this example below we perform different data pre-processing for the different ARDs we want to create. We then generate separate ARDs for the different sections of the AET02 table and then merge them all together.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'tern':
+  method   from 
+  tidy.glm broom</code></pre>
 </div>
-</section>
-<section id="comparing-outputs" class="level2">
-<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
-<p>Upon comparing the two outputs, it’s evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.</p>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adsl</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>adae <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adae <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(AEBODSYS <span class="sc">==</span> <span class="st">'cl A.1'</span> <span class="sc">|</span> AEBODSYS <span class="sc">==</span> <span class="st">"cl D.1"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>adae_one_sub <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>)]))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient for each AEBODSYS</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>adae_one_sub_aebod <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>, <span class="st">"AEBODSYS"</span>)]))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ----- ARDS -----</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>tot_pat_ae <span class="ot">&lt;-</span> <span class="fu">ard_hierarchical</span>(</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">fmt_fn =</span> <span class="sc">~</span> <span class="fu">list</span>(<span class="at">p =</span> <span class="fu">label_cards</span>(<span class="at">digits =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">100</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apply_fmt_fn</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">tbl_name =</span> <span class="st">'tot_pat_ae'</span>)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs </span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>tot_ae <span class="ot">&lt;-</span> <span class="fu">ard_hierarchical</span>(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl) <span class="sc">|&gt;</span> </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">tbl_name =</span> <span class="st">'tot_ae'</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event within each AEBODSYS</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_hierarchical</span>(</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub_aebod,</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">fmt_fn =</span> <span class="sc">~</span> <span class="fu">list</span>(<span class="at">p =</span> <span class="fu">label_cards</span>(<span class="at">digits =</span> <span class="dv">1</span>, <span class="at">scale =</span> <span class="dv">100</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apply_fmt_fn</span>()<span class="sc">|&gt;</span> </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">tbl_name =</span> <span class="st">'tot_pat_ae_aebod'</span>)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs for each AEBODSYS</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_hierarchical</span>(</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl) <span class="sc">|&gt;</span> </span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">tbl_name =</span> <span class="st">'tot_ae_aebod'</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Count and Percent for each AEDECOD within each AEBODSYS</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>ae_n_p_aedecod <span class="ot">&lt;-</span> <span class="fu">ard_hierarchical</span>(</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS, AEDECOD),</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">fmt_fn =</span> <span class="sc">~</span> <span class="fu">list</span>(<span class="at">p =</span> <span class="fu">label_cards</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">100</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apply_fmt_fn</span>()<span class="sc">|&gt;</span> </span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">tbl_name =</span> <span class="st">'ae_n_p_aedecod '</span>)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="co"># bind the ARDs</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>final_aet02_ard <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(tot_pat_ae, tot_ae, tot_pat_ae_aebod, tot_ae_aebod, ae_n_p_aedecod) <span class="sc">|&gt;</span> </span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(variable, context, warning, error))</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>final_aet02_ard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>              ARM         label stat_name stat_label       stat stat_fmt
+1       A: Drug X             Y         n          n         10       10
+2       A: Drug X             Y         N          N         15       15
+3       A: Drug X             Y         p          %  0.6666667     66.7
+4      B: Placebo             Y         n          n         10       10
+5      B: Placebo             Y         N          N         15       15
+6      B: Placebo             Y         p          %  0.6666667     66.7
+7  C: Combination             Y         n          n         14       14
+8  C: Combination             Y         N          N         15       15
+9  C: Combination             Y         p          %  0.9333333     93.3
+10      A: Drug X             Y         n          n         21     NULL
+11      A: Drug X             Y         N          N         15     NULL
+12      A: Drug X             Y         p          %        1.4     NULL
+13     B: Placebo             Y         n          n         20     NULL
+14     B: Placebo             Y         N          N         15     NULL
+15     B: Placebo             Y         p          %   1.333333     NULL
+16 C: Combination             Y         n          n         35     NULL
+17 C: Combination             Y         N          N         15     NULL
+18 C: Combination             Y         p          %   2.333333     NULL
+19      A: Drug X        cl A.1         n          n          7        7
+20      A: Drug X        cl A.1         N          N         15       15
+21      A: Drug X        cl A.1         p          %  0.4666667     46.7
+22      A: Drug X        cl D.1         n          n          9        9
+23      A: Drug X        cl D.1         N          N         15       15
+24      A: Drug X        cl D.1         p          %        0.6     60.0
+25     B: Placebo        cl A.1         n          n          6        6
+26     B: Placebo        cl A.1         N          N         15       15
+27     B: Placebo        cl A.1         p          %        0.4     40.0
+28     B: Placebo        cl D.1         n          n          5        5
+29     B: Placebo        cl D.1         N          N         15       15
+30     B: Placebo        cl D.1         p          %  0.3333333     33.3
+31 C: Combination        cl A.1         n          n         10       10
+32 C: Combination        cl A.1         N          N         15       15
+33 C: Combination        cl A.1         p          %  0.6666667     66.7
+34 C: Combination        cl D.1         n          n         11       11
+35 C: Combination        cl D.1         N          N         15       15
+36 C: Combination        cl D.1         p          %  0.7333333     73.3
+37      A: Drug X        cl A.1         n          n          8     NULL
+38      A: Drug X        cl A.1         N          N         15     NULL
+39      A: Drug X        cl A.1         p          %  0.5333333     NULL
+40      A: Drug X        cl D.1         n          n         13     NULL
+41      A: Drug X        cl D.1         N          N         15     NULL
+42      A: Drug X        cl D.1         p          %  0.8666667     NULL
+43     B: Placebo        cl A.1         n          n         11     NULL
+44     B: Placebo        cl A.1         N          N         15     NULL
+45     B: Placebo        cl A.1         p          %  0.7333333     NULL
+46     B: Placebo        cl D.1         n          n          9     NULL
+47     B: Placebo        cl D.1         N          N         15     NULL
+48     B: Placebo        cl D.1         p          %        0.6     NULL
+49 C: Combination        cl A.1         n          n         16     NULL
+50 C: Combination        cl A.1         N          N         15     NULL
+51 C: Combination        cl A.1         p          %   1.066667     NULL
+52 C: Combination        cl D.1         n          n         19     NULL
+53 C: Combination        cl D.1         N          N         15     NULL
+54 C: Combination        cl D.1         p          %   1.266667     NULL
+55      A: Drug X dcd A.1.1.1.1         n          n          3        3
+56      A: Drug X dcd A.1.1.1.1         N          N         15       15
+57      A: Drug X dcd A.1.1.1.1         p          %        0.2    20.00
+58      A: Drug X dcd A.1.1.1.2         n          n          5        5
+59      A: Drug X dcd A.1.1.1.2         N          N         15       15
+60      A: Drug X dcd A.1.1.1.2         p          %  0.3333333    33.33
+61      A: Drug X dcd D.1.1.1.1         n          n          5        5
+62      A: Drug X dcd D.1.1.1.1         N          N         15       15
+63      A: Drug X dcd D.1.1.1.1         p          %  0.3333333    33.33
+64      A: Drug X dcd D.1.1.4.2         n          n          8        8
+65      A: Drug X dcd D.1.1.4.2         N          N         15       15
+66      A: Drug X dcd D.1.1.4.2         p          %  0.5333333    53.33
+67     B: Placebo dcd A.1.1.1.1         n          n          1        1
+68     B: Placebo dcd A.1.1.1.1         N          N         15       15
+69     B: Placebo dcd A.1.1.1.1         p          % 0.06666667     6.67
+70     B: Placebo dcd A.1.1.1.2         n          n         10       10
+71     B: Placebo dcd A.1.1.1.2         N          N         15       15
+72     B: Placebo dcd A.1.1.1.2         p          %  0.6666667    66.67
+73     B: Placebo dcd D.1.1.1.1         n          n          7        7
+74     B: Placebo dcd D.1.1.1.1         N          N         15       15
+75     B: Placebo dcd D.1.1.1.1         p          %  0.4666667    46.67
+76     B: Placebo dcd D.1.1.4.2         n          n          2        2
+77     B: Placebo dcd D.1.1.4.2         N          N         15       15
+78     B: Placebo dcd D.1.1.4.2         p          %  0.1333333    13.33
+79 C: Combination dcd A.1.1.1.1         n          n          7        7
+80 C: Combination dcd A.1.1.1.1         N          N         15       15
+81 C: Combination dcd A.1.1.1.1         p          %  0.4666667    46.67
+82 C: Combination dcd A.1.1.1.2         n          n          9        9
+83 C: Combination dcd A.1.1.1.2         N          N         15       15
+84 C: Combination dcd A.1.1.1.2         p          %        0.6    60.00
+85 C: Combination dcd D.1.1.1.1         n          n         11       11
+86 C: Combination dcd D.1.1.1.1         N          N         15       15
+87 C: Combination dcd D.1.1.1.1         p          %  0.7333333    73.33
+88 C: Combination dcd D.1.1.4.2         n          n          8        8
+89 C: Combination dcd D.1.1.4.2         N          N         15       15
+90 C: Combination dcd D.1.1.4.2         p          %  0.5333333    53.33
+                                                                                                                                                                                                                                                                                                                   fmt_fn
+1                                                                                                                                                                                                                                                                                                                       0
+2                                                                                                                                                                                                                                                                                                                       0
+3  function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+4                                                                                                                                                                                                                                                                                                                       0
+5                                                                                                                                                                                                                                                                                                                       0
+6  function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+7                                                                                                                                                                                                                                                                                                                       0
+8                                                                                                                                                                                                                                                                                                                       0
+9  function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+10                                                                                                                                                                                                                                                                                                                      0
+11                                                                                                                                                                                                                                                                                                                      0
+12 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+13                                                                                                                                                                                                                                                                                                                      0
+14                                                                                                                                                                                                                                                                                                                      0
+15 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+16                                                                                                                                                                                                                                                                                                                      0
+17                                                                                                                                                                                                                                                                                                                      0
+18 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+19                                                                                                                                                                                                                                                                                                                      0
+20                                                                                                                                                                                                                                                                                                                      0
+21 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+22                                                                                                                                                                                                                                                                                                                      0
+23                                                                                                                                                                                                                                                                                                                      0
+24 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+25                                                                                                                                                                                                                                                                                                                      0
+26                                                                                                                                                                                                                                                                                                                      0
+27 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+28                                                                                                                                                                                                                                                                                                                      0
+29                                                                                                                                                                                                                                                                                                                      0
+30 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+31                                                                                                                                                                                                                                                                                                                      0
+32                                                                                                                                                                                                                                                                                                                      0
+33 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+34                                                                                                                                                                                                                                                                                                                      0
+35                                                                                                                                                                                                                                                                                                                      0
+36 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+37                                                                                                                                                                                                                                                                                                                      0
+38                                                                                                                                                                                                                                                                                                                      0
+39 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+40                                                                                                                                                                                                                                                                                                                      0
+41                                                                                                                                                                                                                                                                                                                      0
+42 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+43                                                                                                                                                                                                                                                                                                                      0
+44                                                                                                                                                                                                                                                                                                                      0
+45 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+46                                                                                                                                                                                                                                                                                                                      0
+47                                                                                                                                                                                                                                                                                                                      0
+48 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+49                                                                                                                                                                                                                                                                                                                      0
+50                                                                                                                                                                                                                                                                                                                      0
+51 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+52                                                                                                                                                                                                                                                                                                                      0
+53                                                                                                                                                                                                                                                                                                                      0
+54 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+55                                                                                                                                                                                                                                                                                                                      0
+56                                                                                                                                                                                                                                                                                                                      0
+57 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+58                                                                                                                                                                                                                                                                                                                      0
+59                                                                                                                                                                                                                                                                                                                      0
+60 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+61                                                                                                                                                                                                                                                                                                                      0
+62                                                                                                                                                                                                                                                                                                                      0
+63 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+64                                                                                                                                                                                                                                                                                                                      0
+65                                                                                                                                                                                                                                                                                                                      0
+66 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+67                                                                                                                                                                                                                                                                                                                      0
+68                                                                                                                                                                                                                                                                                                                      0
+69 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+70                                                                                                                                                                                                                                                                                                                      0
+71                                                                                                                                                                                                                                                                                                                      0
+72 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+73                                                                                                                                                                                                                                                                                                                      0
+74                                                                                                                                                                                                                                                                                                                      0
+75 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+76                                                                                                                                                                                                                                                                                                                      0
+77                                                                                                                                                                                                                                                                                                                      0
+78 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+79                                                                                                                                                                                                                                                                                                                      0
+80                                                                                                                                                                                                                                                                                                                      0
+81 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+82                                                                                                                                                                                                                                                                                                                      0
+83                                                                                                                                                                                                                                                                                                                      0
+84 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+85                                                                                                                                                                                                                                                                                                                      0
+86                                                                                                                                                                                                                                                                                                                      0
+87 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+88                                                                                                                                                                                                                                                                                                                      0
+89                                                                                                                                                                                                                                                                                                                      0
+90 function (x) , {,     res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * ,         scale, digits = digits), nsmall = digits))),     if (!is.null(width)) {,         res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, ,             paste0(strrep(" ", width - nchar(res)), res)),     },     res, }
+           tbl_name AEBODSYS
+1        tot_pat_ae     &lt;NA&gt;
+2        tot_pat_ae     &lt;NA&gt;
+3        tot_pat_ae     &lt;NA&gt;
+4        tot_pat_ae     &lt;NA&gt;
+5        tot_pat_ae     &lt;NA&gt;
+6        tot_pat_ae     &lt;NA&gt;
+7        tot_pat_ae     &lt;NA&gt;
+8        tot_pat_ae     &lt;NA&gt;
+9        tot_pat_ae     &lt;NA&gt;
+10           tot_ae     &lt;NA&gt;
+11           tot_ae     &lt;NA&gt;
+12           tot_ae     &lt;NA&gt;
+13           tot_ae     &lt;NA&gt;
+14           tot_ae     &lt;NA&gt;
+15           tot_ae     &lt;NA&gt;
+16           tot_ae     &lt;NA&gt;
+17           tot_ae     &lt;NA&gt;
+18           tot_ae     &lt;NA&gt;
+19 tot_pat_ae_aebod     &lt;NA&gt;
+20 tot_pat_ae_aebod     &lt;NA&gt;
+21 tot_pat_ae_aebod     &lt;NA&gt;
+22 tot_pat_ae_aebod     &lt;NA&gt;
+23 tot_pat_ae_aebod     &lt;NA&gt;
+24 tot_pat_ae_aebod     &lt;NA&gt;
+25 tot_pat_ae_aebod     &lt;NA&gt;
+26 tot_pat_ae_aebod     &lt;NA&gt;
+27 tot_pat_ae_aebod     &lt;NA&gt;
+28 tot_pat_ae_aebod     &lt;NA&gt;
+29 tot_pat_ae_aebod     &lt;NA&gt;
+30 tot_pat_ae_aebod     &lt;NA&gt;
+31 tot_pat_ae_aebod     &lt;NA&gt;
+32 tot_pat_ae_aebod     &lt;NA&gt;
+33 tot_pat_ae_aebod     &lt;NA&gt;
+34 tot_pat_ae_aebod     &lt;NA&gt;
+35 tot_pat_ae_aebod     &lt;NA&gt;
+36 tot_pat_ae_aebod     &lt;NA&gt;
+37     tot_ae_aebod     &lt;NA&gt;
+38     tot_ae_aebod     &lt;NA&gt;
+39     tot_ae_aebod     &lt;NA&gt;
+40     tot_ae_aebod     &lt;NA&gt;
+41     tot_ae_aebod     &lt;NA&gt;
+42     tot_ae_aebod     &lt;NA&gt;
+43     tot_ae_aebod     &lt;NA&gt;
+44     tot_ae_aebod     &lt;NA&gt;
+45     tot_ae_aebod     &lt;NA&gt;
+46     tot_ae_aebod     &lt;NA&gt;
+47     tot_ae_aebod     &lt;NA&gt;
+48     tot_ae_aebod     &lt;NA&gt;
+49     tot_ae_aebod     &lt;NA&gt;
+50     tot_ae_aebod     &lt;NA&gt;
+51     tot_ae_aebod     &lt;NA&gt;
+52     tot_ae_aebod     &lt;NA&gt;
+53     tot_ae_aebod     &lt;NA&gt;
+54     tot_ae_aebod     &lt;NA&gt;
+55  ae_n_p_aedecod    cl A.1
+56  ae_n_p_aedecod    cl A.1
+57  ae_n_p_aedecod    cl A.1
+58  ae_n_p_aedecod    cl A.1
+59  ae_n_p_aedecod    cl A.1
+60  ae_n_p_aedecod    cl A.1
+61  ae_n_p_aedecod    cl D.1
+62  ae_n_p_aedecod    cl D.1
+63  ae_n_p_aedecod    cl D.1
+64  ae_n_p_aedecod    cl D.1
+65  ae_n_p_aedecod    cl D.1
+66  ae_n_p_aedecod    cl D.1
+67  ae_n_p_aedecod    cl A.1
+68  ae_n_p_aedecod    cl A.1
+69  ae_n_p_aedecod    cl A.1
+70  ae_n_p_aedecod    cl A.1
+71  ae_n_p_aedecod    cl A.1
+72  ae_n_p_aedecod    cl A.1
+73  ae_n_p_aedecod    cl D.1
+74  ae_n_p_aedecod    cl D.1
+75  ae_n_p_aedecod    cl D.1
+76  ae_n_p_aedecod    cl D.1
+77  ae_n_p_aedecod    cl D.1
+78  ae_n_p_aedecod    cl D.1
+79  ae_n_p_aedecod    cl A.1
+80  ae_n_p_aedecod    cl A.1
+81  ae_n_p_aedecod    cl A.1
+82  ae_n_p_aedecod    cl A.1
+83  ae_n_p_aedecod    cl A.1
+84  ae_n_p_aedecod    cl A.1
+85  ae_n_p_aedecod    cl D.1
+86  ae_n_p_aedecod    cl D.1
+87  ae_n_p_aedecod    cl D.1
+88  ae_n_p_aedecod    cl D.1
+89  ae_n_p_aedecod    cl D.1
+90  ae_n_p_aedecod    cl D.1</code></pre>
+</div>
+</div>
 
 
 </section>
@@ -318,18 +621,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -361,7 +653,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -396,7 +728,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -672,7 +1008,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="./02-DMT01.html" class="pagination-link  aria-label=" demographics="" table"="">
+      <a href="./02-DMT01.html" class="pagination-link" aria-label="Demographics Table">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Demographics Table</span>
       </a>          
   </div>

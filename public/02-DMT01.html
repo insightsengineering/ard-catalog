@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Implementing {cards} in the QC Workflow - Demographics and Baseline Characteristics (DMT01)</title>
+<title>Demographics and Baseline Characteristics (DMT01) – Implementing {cards} in the QC Workflow</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -112,13 +112,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-DMT01.html">ard-catalog</a></li><li class="breadcrumb-item"><a href="./02-DMT01.html">Demographics Table</a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -128,7 +128,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./images/ard-c-logo.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
       </a>
@@ -153,7 +153,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="sidebar-item-container"> 
             <a href="./01-QCing.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">QCing with ARDS</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -168,9 +168,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">ard-catalog</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -217,8 +217,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="building-a-dmt01-table-using-the-chevron-package" class="level2">
-<h2 class="anchored" data-anchor-id="building-a-dmt01-table-using-the-chevron-package">Building a DMT01 table using the {chevron} package</h2>
 <div class="cell">
 <style type="text/css">
 .output {
@@ -227,567 +225,34 @@ overflow-x: scroll;
 }
 </style>
 </div>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a table using the chevron package </span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dmt01 <span class="ot">&lt;-</span> chevron<span class="sc">::</span><span class="fu">run</span>(dmt01, syn_data)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>dmt01</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>                                       A: Drug X    B: Placebo   C: Combination   All Patients
-                                         (N=15)       (N=15)         (N=15)          (N=45)   
-  ————————————————————————————————————————————————————————————————————————————————————————————
-  Age (yr)                                                                                    
-    n                                      15           15             15              45     
-    Mean (SD)                          31.3 (5.3)   35.1 (9.0)     36.6 (6.4)      34.3 (7.3) 
-    Median                                31.0         35.0           35.0            34.0    
-    Min - Max                           24 - 40      24 - 57        24 - 49         24 - 57   
-  Age Group                                                                                   
-    n                                      15           15             15              45     
-    &lt;65                                15 (100%)    15 (100%)      15 (100%)       45 (100%)  
-  Sex                                                                                         
-    n                                      15           15             15              45     
-    Male                               3 (20.0%)    7 (46.7%)      5 (33.3%)       15 (33.3%) 
-    Female                             12 (80.0%)   8 (53.3%)      10 (66.7%)      30 (66.7%) 
-  Ethnicity                                                                                   
-    n                                      15           15             15              45     
-    HISPANIC OR LATINO                 2 (13.3%)        0              0            2 (4.4%)  
-    NOT HISPANIC OR LATINO             13 (86.7%)   15 (100%)      13 (86.7%)      41 (91.1%) 
-    NOT REPORTED                           0            0          2 (13.3%)        2 (4.4%)  
-  RACE                                                                                        
-    n                                      15           15             15              45     
-    AMERICAN INDIAN OR ALASKA NATIVE       0        2 (13.3%)       1 (6.7%)        3 (6.7%)  
-    ASIAN                              8 (53.3%)    10 (66.7%)     8 (53.3%)       26 (57.8%) 
-    BLACK OR AFRICAN AMERICAN          4 (26.7%)     1 (6.7%)      4 (26.7%)       9 (20.0%)  
-    WHITE                              3 (20.0%)    2 (13.3%)      2 (13.3%)       7 (15.6%)  </code></pre>
-</div>
-</div>
-<p>We can use {rtables} functionality to flatten this table into a data frame.</p>
-<div class="cell output">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> rtables<span class="sc">::</span><span class="fu">as_result_df</span>(dmt01, <span class="at">make_ard =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>results [, <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">8</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="kable-table">
-<table class="table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: left;">variable</th>
-<th style="text-align: right;">stat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">31.3333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">5.2599113</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">31.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">24.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">40.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">3.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.2000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">12.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.8000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.1333333</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">13.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.8666667</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">8.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.5333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">4.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.2666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">3.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.2000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">35.0666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">9.0274713</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">35.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">24.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">57.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">7.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.4666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">8.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.5333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.1333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">10.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.6666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.0666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.1333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">36.6000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">6.4453749</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">35.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">24.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">49.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">5.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.3333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">10.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.6666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">13.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.8666667</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.1333333</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.0666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">8.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.5333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">4.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.2666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.1333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">34.3333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">7.2769874</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">34.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">24.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AAGE</td>
-<td style="text-align: right;">57.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AGEGR1</td>
-<td style="text-align: right;">1.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">15.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.3333333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">30.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">SEX</td>
-<td style="text-align: right;">0.6666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0444444</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">41.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.9111111</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">2.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ETHNIC</td>
-<td style="text-align: right;">0.0444444</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">45.0000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">3.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.0666667</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">26.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.5777778</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">9.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.2000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">7.0000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">RACE</td>
-<td style="text-align: right;">0.1555556</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="building-dmt01-statstics-using-the-cards-package" class="level2">
-<h2 class="anchored" data-anchor-id="building-dmt01-statstics-using-the-cards-package">Building DMT01 statstics using the {cards} package</h2>
+<section id="calculating-dmt01-statstics-using-the-cards-package" class="level2">
+<h2 class="anchored" data-anchor-id="calculating-dmt01-statstics-using-the-cards-package">Calculating DMT01 statstics using the {cards} package</h2>
 <p>In this example below, we calculate the same summary statistics usings the {cards} package with the same data set provided by the {chevron} package.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># build ARDs that calculate relevant statistics for continuous and categorical variables.</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ards <span class="ot">&lt;-</span> <span class="fu">ard_stack</span>(syn_data<span class="sc">$</span>adsl, <span class="fu">ard_continuous</span>(<span class="at">variables =</span> <span class="fu">c</span>(AGE)),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">ard_categorical</span>(<span class="at">variables =</span> <span class="fu">c</span>(AGEGR1, SEX, ETHNIC, RACE)),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.by =</span> <span class="st">"ARM"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.overall =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ards</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(chevron)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'tern':
+  method   from 
+  tidy.glm broom</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build ARDs that calculate relevant statistics for continuous and categorical variables.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ards <span class="ot">&lt;-</span> <span class="fu">ard_stack</span>(syn_data<span class="sc">$</span>adsl, <span class="fu">ard_continuous</span>(<span class="at">variables =</span> <span class="fu">c</span>(AGE)),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">ard_categorical</span>(<span class="at">variables =</span> <span class="fu">c</span>(AGEGR1, SEX, ETHNIC, RACE)),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.by =</span> <span class="st">"ARM"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">.overall =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ards</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="kable-table">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 1%">
 <col style="width: 3%">
@@ -3227,719 +2692,6 @@ overflow-x: scroll;
 </div>
 </div>
 </div>
-</section>
-<section id="comparing-outputs" class="level2">
-<h2 class="anchored" data-anchor-id="comparing-outputs">Comparing Outputs</h2>
-<p>We can compare the statistics for Mean and SD values for our continuous variable.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality in means and sd</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mean_tbl &lt;- results |&gt;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::filter(label_name %in% "Mean (SD)") |&gt;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::select(9:11) |&gt;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># mean_ard &lt;- ards %&gt;%</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::filter(stat_name %in% c("mean", "sd")) %&gt;%</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::summarise(</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#     "Mean(SD)" = paste(stat[stat_name == "mean"], "(", stat[stat_name == "sd"], ")", sep = ""))</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># mean_tbl</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#mean_ard</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<p>We can also compare the statistics related to categorical variables (truncated to make it easier to read).</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality in n, N and percent</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cat_tbl &lt;- results |&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::filter(avar_name %in% "RACE") |&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::select(c(3,9:11)) |&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   dplyr::mutate(across(everything(), ~purrr::map_chr(.x, ~paste(.x, collapse = ", "))))</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cat_tbl</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cat_ard <span class="ot">&lt;-</span> ards <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"RACE"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"N"</span>, <span class="st">"p"</span>)) </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>cat_ard</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<div class="kable-table">
-<table class="table table-sm table-striped small">
-<colgroup>
-<col style="width: 1%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 3%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 2%">
-<col style="width: 75%">
-<col style="width: 1%">
-<col style="width: 1%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">group1</th>
-<th style="text-align: left;">group1_level</th>
-<th style="text-align: left;">variable</th>
-<th style="text-align: left;">variable_level</th>
-<th style="text-align: left;">context</th>
-<th style="text-align: left;">stat_name</th>
-<th style="text-align: left;">stat_label</th>
-<th style="text-align: left;">stat</th>
-<th style="text-align: left;">fmt_fn</th>
-<th style="text-align: left;">warning</th>
-<th style="text-align: left;">error</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.5333333</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.2666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.2</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.1333333</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">10</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.6666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.06666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.1333333</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.06666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.5333333</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.2666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ARM</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.1333333</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">45</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.06666667</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">26</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">45</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.5777778</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">9</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">45</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.2</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">n</td>
-<td style="text-align: left;">7</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">N</td>
-<td style="text-align: left;">45</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">NA</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">RACE</td>
-<td style="text-align: left;">4</td>
-<td style="text-align: left;">categorical</td>
-<td style="text-align: left;">p</td>
-<td style="text-align: left;">%</td>
-<td style="text-align: left;">0.1555556</td>
-<td style="text-align: left;">function (x) , {, res &lt;- ifelse(is.na(x), NA_character_, str_trim(format(round5(x * , scale, digits = digits), nsmall = digits))), if (!is.null(width)) {, res &lt;- ifelse(nchar(res) &gt;= width | is.na(res), res, , paste0(strrep(” “, width - nchar(res)), res)), }, res, }</td>
-<td style="text-align: left;">NULL</td>
-<td style="text-align: left;">NULL</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<p>Upon comparing the two outputs, it’s evident that both methods yield identical values, enabling their use for Quality Control (QC) purposes.</p>
 
 
 </section>
@@ -3980,18 +2732,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -4023,7 +2764,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -4058,7 +2839,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -4334,7 +3119,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation column-page-right">
   <div class="nav-page nav-page-previous">
-      <a href="./01-QCing.html" class="pagination-link  aria-label=" qcing="" with="" ards"="">
+      <a href="./01-QCing.html" class="pagination-link" aria-label="QCing with ARDS">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">QCing with ARDS</span>
       </a>          
   </div>

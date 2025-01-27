@@ -21,7 +21,7 @@ library(chevron)
 
 adsl <- syn_data$adsl
 adae <- syn_data$adae |>
-  filter(AEBODSYS == 'cl A.1' | AEBODSYS == "cl D.1")
+  dplyr::filter(AEBODSYS == 'cl A.1' | AEBODSYS == "cl D.1")
 
 
 # Keep only 1 record per patient
@@ -30,7 +30,7 @@ adae_one_sub <- adae %>%
 
 # Keep only 1 record per patient for each AEBODSYS
 adae_one_sub_aebod <- adae %>% 
-  filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
+  dplyr::filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
 
 
 # ----- ARDS -----
@@ -85,10 +85,11 @@ ae_n_p_aedecod <- ard_hierarchical(
   shuffle_ard(trim = FALSE) |> 
   dplyr::mutate(tbl_name = 'ae_n_p_aedecod ')
 
-# bind the ARDs together
-final_aet02_ard <- bind_rows(tot_pat_ae, tot_ae, tot_pat_ae_aebod, tot_ae_aebod, ae_n_p_aedecod) |> 
+# bind the ARDs
+final_aet02_ard <- dplyr::bind_rows(tot_pat_ae, tot_ae, tot_pat_ae_aebod, tot_ae_aebod, ae_n_p_aedecod) |> 
   as.data.frame() |> 
-  select(-c(variable, context, warning, error))
+  dplyr::select(-c(variable, context, warning, error))
+
 
 final_aet02_ard
 ```

@@ -757,11 +757,12 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 </section>
 <section id="compare-programmatically" class="level4">
 <h4 class="anchored" data-anchor-id="compare-programmatically">Compare programmatically</h4>
+<p>With all stats aligned, functions such as <code>all.equal()</code> or <code>identical</code> can be used to verify if the stats produced are equivalent.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">na.omit</span>(compare) <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">columns_match =</span> <span class="st">"stat"</span> <span class="sc">==</span> <span class="st">"stat_rtables"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">columns_match =</span> stat <span class="sc">==</span> stat_rtables)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="kable-table">
@@ -803,7 +804,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
 <td style="text-align: right;">15.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -815,7 +816,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -827,7 +828,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
 <td style="text-align: right;">15.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -839,7 +840,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -851,7 +852,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
 <td style="text-align: right;">15.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -863,7 +864,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -875,7 +876,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">45</td>
 <td style="text-align: right;">45.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -887,7 +888,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -899,7 +900,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">12</td>
 <td style="text-align: right;">12.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -911,7 +912,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.8</td>
 <td style="text-align: right;">0.8000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -923,7 +924,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">3</td>
 <td style="text-align: right;">3.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -935,7 +936,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.2</td>
 <td style="text-align: right;">0.2000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -947,7 +948,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">8</td>
 <td style="text-align: right;">8.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -959,7 +960,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.5333333</td>
 <td style="text-align: right;">0.5333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -971,7 +972,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">7</td>
 <td style="text-align: right;">7.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -983,7 +984,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.4666667</td>
 <td style="text-align: right;">0.4666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -995,7 +996,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">10</td>
 <td style="text-align: right;">10.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1007,7 +1008,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.6666667</td>
 <td style="text-align: right;">0.6666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1019,7 +1020,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">5</td>
 <td style="text-align: right;">5.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1031,7 +1032,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.3333333</td>
 <td style="text-align: right;">0.3333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1043,7 +1044,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">30</td>
 <td style="text-align: right;">30.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1055,7 +1056,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.6666667</td>
 <td style="text-align: right;">0.6666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1067,7 +1068,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
 <td style="text-align: right;">15.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1079,7 +1080,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.3333333</td>
 <td style="text-align: right;">0.3333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1091,7 +1092,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1103,7 +1104,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1333333</td>
 <td style="text-align: right;">0.1333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1115,7 +1116,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">13</td>
 <td style="text-align: right;">13.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1127,7 +1128,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.8666667</td>
 <td style="text-align: right;">0.8666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1139,7 +1140,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1151,7 +1152,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1163,7 +1164,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1175,7 +1176,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1187,7 +1188,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">15</td>
 <td style="text-align: right;">15.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1199,7 +1200,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1211,7 +1212,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1223,7 +1224,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1235,7 +1236,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1247,7 +1248,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1259,7 +1260,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">13</td>
 <td style="text-align: right;">13.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1271,7 +1272,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.8666667</td>
 <td style="text-align: right;">0.8666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1283,7 +1284,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1295,7 +1296,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1333333</td>
 <td style="text-align: right;">0.1333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1307,7 +1308,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1319,7 +1320,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.04444444</td>
 <td style="text-align: right;">0.0444444</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1331,7 +1332,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">41</td>
 <td style="text-align: right;">41.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1343,7 +1344,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.9111111</td>
 <td style="text-align: right;">0.9111111</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1355,7 +1356,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1367,7 +1368,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.04444444</td>
 <td style="text-align: right;">0.0444444</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1379,7 +1380,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1391,7 +1392,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0</td>
 <td style="text-align: right;">0.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1403,7 +1404,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">8</td>
 <td style="text-align: right;">8.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1415,7 +1416,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.5333333</td>
 <td style="text-align: right;">0.5333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1427,7 +1428,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: right;">4.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1439,7 +1440,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.2666667</td>
 <td style="text-align: right;">0.2666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1451,7 +1452,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">3</td>
 <td style="text-align: right;">3.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1463,7 +1464,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.2</td>
 <td style="text-align: right;">0.2000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1475,7 +1476,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1487,7 +1488,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1333333</td>
 <td style="text-align: right;">0.1333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1499,7 +1500,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">10</td>
 <td style="text-align: right;">10.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1511,7 +1512,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.6666667</td>
 <td style="text-align: right;">0.6666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1523,7 +1524,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1535,7 +1536,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.06666667</td>
 <td style="text-align: right;">0.0666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1547,7 +1548,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1559,7 +1560,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1333333</td>
 <td style="text-align: right;">0.1333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1571,7 +1572,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">1</td>
 <td style="text-align: right;">1.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1583,7 +1584,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.06666667</td>
 <td style="text-align: right;">0.0666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1595,7 +1596,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">8</td>
 <td style="text-align: right;">8.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1607,7 +1608,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.5333333</td>
 <td style="text-align: right;">0.5333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1619,7 +1620,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">4</td>
 <td style="text-align: right;">4.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1631,7 +1632,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.2666667</td>
 <td style="text-align: right;">0.2666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1643,7 +1644,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">2</td>
 <td style="text-align: right;">2.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1655,7 +1656,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1333333</td>
 <td style="text-align: right;">0.1333333</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1667,7 +1668,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">3</td>
 <td style="text-align: right;">3.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1679,7 +1680,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.06666667</td>
 <td style="text-align: right;">0.0666667</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1691,7 +1692,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">26</td>
 <td style="text-align: right;">26.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1703,7 +1704,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.5777778</td>
 <td style="text-align: right;">0.5777778</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1715,7 +1716,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">9</td>
 <td style="text-align: right;">9.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1727,7 +1728,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.2</td>
 <td style="text-align: right;">0.2000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ARM</td>
@@ -1739,7 +1740,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">n</td>
 <td style="text-align: left;">7</td>
 <td style="text-align: right;">7.0000000</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ARM</td>
@@ -1751,7 +1752,7 @@ A common practice to ensure quality control (QC) of the calculated statistics is
 <td style="text-align: left;">%</td>
 <td style="text-align: left;">0.1555556</td>
 <td style="text-align: right;">0.1555556</td>
-<td style="text-align: left;">FALSE</td>
+<td style="text-align: left;">TRUE</td>
 </tr>
 </tbody>
 </table>
