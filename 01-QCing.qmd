@@ -73,36 +73,25 @@ With both data frames containing similar key variables (group_level, variable_la
 reformat <- results |>
   dplyr::select(-c(1:2,7)) |>
   dplyr::rename("group1" = group2, "group1_level" = group2_level, "stat_rtables" = stat) |>
-   dplyr::mutate(variable_level = sub("^[^.]*\\.", "", variable_level)) |>
-  dplyr::mutate(stat_name = dplyr::recode(stat_name, 
-                         "n" = "N",
-                         "count" = "n"),
-                variable = dplyr::recode(variable, 
-                         "AAGE" = "AGE"),
-                variable_level = dplyr::recode(variable_level, 
-                         "Male" = "M",
-                         "Female" = "F")) |>
-  dplyr::mutate(variable_level = dplyr::case_when(
-    variable_level %in% c("mean_sd", "median", "range", "n") ~ NA_character_,
-    TRUE ~ variable_level
-  ))
+   dplyr::mutate(
+    variable_level = sub("^[^.]*\\.", "", variable_level), # use variable_label
+    stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n"),
+    variable = dplyr::recode(variable, "AAGE" = "AGE"),
+    variable_level = dplyr::recode(variable_level, "Male" = "M", "Female" = "F"),
+    variable_level = dplyr::case_when(
+      variable_level %in% c("mean_sd", "median", "range", "n") ~ NA_character_,
+      TRUE ~ variable_level
+    )
+  )
 
-ards2 <- ards |> 
-  dplyr::mutate(group1_level = purrr::map_chr(group1_level, 
-                                             ~ if (length(.x) > 0) {
-                                               as.character(.x[[1]])
-                                             } else {
-                                               NA_character_
-                                             })) |>
-    dplyr::mutate(variable_level = purrr::map_chr(variable_level, 
-                                             ~ if (length(.x) > 0) {
-                                               as.character(.x[[1]])
-                                             } else {
-                                               NA_character_
-                                             })) |>
-  dplyr::select(-c(9:11)) |>
-  dplyr::mutate(group1 = dplyr::coalesce(group1, "ARM"),
-                group1_level = dplyr::coalesce(group1_level, "All Patients"))
+ards2 <- ards |>
+  dplyr::mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+    group1 = dplyr::coalesce(group1, "ARM"),
+    group1_level = dplyr::coalesce(group1_level, "All Patients")
+  ) |>
+  dplyr::select(-c(9:11))
 
 # perform a left join
 

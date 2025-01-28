@@ -92,4 +92,5 @@ final_aet02_ard <- dplyr::bind_rows(tot_pat_ae, tot_ae, tot_pat_ae_aebod, tot_ae
 
 
 final_aet02_ard
+rmarkdown::paged_table(final_aet02_ard)
 ```
