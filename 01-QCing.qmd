@@ -77,7 +77,7 @@ reformat <- results |>
    dplyr::mutate(
     variable_level = sub("^[^.]*\\.", "", variable_level), # use variable_label
     stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n"),
-    variable = dplyr::recode(variable, "AAGE" = "AGE"),
+    # variable = dplyr::recode(variable, "AAGE" = "AGE"),
     variable_level = dplyr::recode(variable_level, "Male" = "M", "Female" = "F"),
     variable_level = dplyr::case_when(
       variable_level %in% c("mean_sd", "median", "range", "n") ~ NA_character_,
@@ -110,4 +110,39 @@ na.omit(compare) %>%
   dplyr::mutate(columns_match = stat == stat_rtables)
 ```
 
+
+```{r}
+library(diffdf)
+
+ard_rtables <- reformat |> 
+  dplyr::rename(stat = stat_rtables) |> 
+  dplyr::select(-stat_string)
+
+ard_rtables |> str()
+
+ard_cards <- ards2 |> 
+  dplyr::select(-stat_label) |> 
+  dplyr::mutate(stat = as.numeric(stat))
+
+ard_cards |> str()
+```
+
+```{r}
+library(diffdf)
+# compare the two data frames
+out <- diffdf::diffdf(
+  base = ard_cards, compare = ard_rtables, 
+  key = c("group1_level", "group1", "variable", "variable_level", "stat_name", "stat")
+)
+
+```
+
+```{r}
+library(dataCompareR)
+# compare the two data frames
+dataCompareR::rCompare(
+  ard_cards, ard_rtables, 
+  key = c("group1_level", "group1", "variable", "variable_level", "stat_name")
+)
+```
 
