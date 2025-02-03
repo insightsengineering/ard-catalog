@@ -8,18 +8,18 @@ website:
   page-navigation: true
   title: "Implementing {cards} in the QC Workflow"
   description: "Background on {cards}, {cardx}, {gtsummary}"
-  favicon: "images/nest_cards_logo.png"
+  favicon: "images/ard-c-logo.png"
 
   repo-url: https://github.com/insightsengineering/ard-catalog
   repo-actions: [edit, issue]
 
   page-footer:
     left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#98d4c1"
+    background: "#0f1b66"
 
   sidebar:
-    background: "#98d4c1"
-    logo: "images/nest_cards_logo.png"
+    background: "#0f1b66"
+    logo: "images/ard-c-logo.png"
     pinned: true
     align: center
     tools:
@@ -27,9 +27,21 @@ website:
         href: https://github.com/insightsengineering/ard-catalog
         text: GitHub
     style: docked
+    collapse-level: 1
     contents:
-     - href: index.qmd
-       text: Home
+    - href: index.qmd
+      text: Home
+    - section: "QCing with ARDS"
+      href: 01-QCing.qmd
+      contents:
+        - 01-QCing.qmd
+    - section: "ard-catalog"
+      contents:
+        - href: 02-DMT01.qmd
+          text: Demographics Table
+        - href: 03-AET02.qmd
+          text: Adverse Events Table
+
 
 format:
   html:

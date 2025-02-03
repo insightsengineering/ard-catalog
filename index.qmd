@@ -14,7 +14,7 @@ create complex table structures and generate statistics that should be
 programmatically compared.
 
 In this document, we will showcase how the {cards} and {cardx} packages
-can be used to QC common outputs generated using NEST paackages.
+can be used to QC common outputs generated using NEST packages.
 
 [`r fontawesome::fa("github")`
 {cards}](https://github.com/insightsengineering/cards)
@@ -26,4 +26,4 @@ can be used to QC common outputs generated using NEST paackages.
 {tern}](https://github.com/insightsengineering/tern)
 
 [`r fontawesome::fa("github")`
-{tlg-catalog}](https://github.com/insightsengineering/tlg-catalog)
+{chevron}](https://github.com/insightsengineering/chevron)
