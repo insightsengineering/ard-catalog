@@ -46,6 +46,4 @@ website:
 format:
   html:
     theme: cosmo
-
-
 editor: source
