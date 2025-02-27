@@ -18,7 +18,7 @@ format:
 library(chevron)
 
 # Create a table using the chevron package 
-dmt01 <- chevron::run(dmt01, syn_data)
+dmt01 <- run(dmt01, syn_data)
 dmt01
 
 ```
@@ -71,6 +71,7 @@ The `variable_level` leads with the statistic name, followed by "." and then the
 3.  Convert the "n":"N" and "count":"n".
 4.  Recode the variable AAGE to AGE.
 5.  Recode the `SEX` variable Male:M, Female:F. Note: if you are mapping variables in {citril}, these changes would already be captured.
+6.  Let's remove columns we know won't be in the ard dataframe for simplicity (ie. stat_string and variable label)
 
 ```{r}
 # rework the rtables output to match ----
@@ -85,7 +86,7 @@ reformat <- results |>
     stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n"),
     variable = dplyr::recode(variable, "AAGE" = "AGE"),
     variable_level = dplyr::recode(variable_level, "Male" = "M", "Female" = "F")
-  )
+  ) |> dplyr::select(-c("variable_label", "stat_string"))
 
 ```
 
@@ -118,20 +119,29 @@ ards2 <- ards |>
     group1 = dplyr::coalesce(group1, "ARM"),
     group1_level = dplyr::coalesce(group1_level, "All Patients")
   ) |>
-  dplyr::select(-c(9:11)) |>
-  as.data.frame()
+  dplyr::select(-c("context", "fmt_fn", "stat_label", "warning", "error"))
+```
+
+Note that the ARD result is considerably larger than the rtables result (177 rows vs 120 rows). Here are a few differences:
+
+1. ARDs compute statistics for all levels of a variable, even if, that level is not observed in the data. We can remove any of the levels that are not in our comparison table to simplify.
+```{r}
+ards2 |>
+  filter(variable == "ETHNIC" & variable_level == "UNKNOWN")
+
+ards2 <- ards2 |> 
+  dplyr::filter(!(variable == "ETHNIC" & variable_level == "UNKNOWN"),
+                !variable == "ARM")
 ```
 
 #### Compare programmatically
 
 Here we propose using the {diffdf} package to compare the statistics produced by the two table engines. {diffdf} is designed to compare two data frames and report any differences/inconsistencies to the user.
 
-Note: We'll remove the columns that are not shared between the two results to avoid messaging for known differences (ie. fmt_fn, stat_string)
-
 ```{r}
 library(diffdf)
 
-diffdf(reformat[,!(names(reformat) %in% c("variable_label", "stat_string"))], ards2[,!(names(ards2) %in% c("fmt_fn", "context", "stat_label"))], keys = c("group1_level","group1", "variable", "variable_level", "stat_name"), suppress_warnings = TRUE)
+diffdf(reformat, ards2, keys = c("group1_level","group1", "variable", "variable_level", "stat_name"), suppress_warnings = TRUE)
 
 ```
 
@@ -146,3 +156,41 @@ differences <- ards2 %>% #start with the data.frames which contain greater numbe
 differences
 
 ```
+
+
+
+### Developer Notes:
+
+1. should we provide a function for converting the lists in ARD columns to characters and numbers for the df comparison?
+Example function:
+```{r}
+convert_column <- function(df, columns, type = c("character", "numeric")) {
+  type <- match.arg(type)
+  
+  for (col in columns) {
+    if (is.list(df[[col]])) {  # Check if the column is of type 'list'
+      if (type == "character") {
+        df[[col]] <- purrr::map_chr(df[[col]], ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_))
+      } else if (type == "numeric") {
+        df[[col]] <- purrr::map_dbl(df[[col]], ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_))
+      }
+    }
+  }
+  return(df)
+}
+
+test <- convert_column(ards2, names(ards2))
+
+class(test$variable_level)
+class(test$group1_level)
+class(test$stat)
+```
+
+2. What's the best way to supply the variable level in the rtables output when the level is "n"? This is the overall number of observations - do we just pull the level from the row below it? It can be messy since we're assuming the sorting order of the rows. (accounts for ~ 40 rows of difference)
+3. In ARDs, there's a step for supplementing "ARM" in the group column when the default is "NULL" for the "All Patients" rows.
+4. "AAGE" still exists (even after pulling the latest rtables changes).
+
+
+Differences:
+- ARDs has stats for groups that are pruned in the table created by chevron (ex. the AGEGR1 >=65) ~12 rows difference
+- ARD has rows for the split variable (ARM) - I removed them before differentiating, is that okay?
