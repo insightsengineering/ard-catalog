@@ -57,12 +57,12 @@ adsl <- df_explicit_na(adsl)
 adlb <- df_explicit_na(adlb) %>%
   filter(ANL01FL == "Y")
 
-ard_result <- ard_strata(
-  adlb,
-  .by = AVISIT,
-  .f = ~ ard_continuous(.x, by = c(ARM, PARAM), variables = c(AVAL, CHG), statistic = list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
-      )
+ard_result <- ard_continuous(adlb, 
+                             by = c(ARM, PARAM, AVISIT), 
+                             variables = c(AVAL, CHG), 
+                             statistic = list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
 
+### How to calculate overall?
 ```
 
 ### Statistics comparison
