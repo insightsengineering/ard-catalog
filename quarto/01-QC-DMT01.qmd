@@ -20,7 +20,7 @@ format:
 library(chevron)
 
 # Create a table using the chevron package 
-tlg_dmt01 <- run(dmt01, syn_data)
+tlg_dmt01 <- chevron::dmt01_main(syn_data, summaryvars = c("AGE", "AGEGR1", "SEX", "ETHNIC", "RACE"))
 tlg_dmt01
 
 ```
@@ -77,22 +77,18 @@ The `variable_level` leads with the statistic name, followed by "." and then the
 1.  Set the `variable_level` to NA in the rtables result for a continuous data summary (as variable levels don't apply and is NULL in the ARD object).
 2.  Remove the stat_name (ie. "count") before the variable level.
 3.  Convert the "n":"N" and "count":"n".
-4.  Recode the variable AAGE to AGE.
-5.  Recode the `SEX` variable Male:M, Female:F. Note: if you are mapping variables in {citril}, these changes would already be captured.
-6.  Let's remove columns we know won't be in the ard dataframe for simplicity (ie. stat_string and variable label)
+4.  Let's remove columns we know won't be in the ard dataframe for simplicity (ie. stat_string and variable label)
 
 ```{r}
 
 rtables_result <- rtables_result |>
   dplyr::mutate(
-    variable = dplyr::recode(variable, "AAGE" = "AGE"),
     variable_level = dplyr::case_when(
       variable == "AGE" & variable_level %in% c("mean_sd", "median", "range", "n") ~ NA_character_,
       TRUE ~ variable_level
     ),
     variable_level = sub("^[^.]*\\.", "", variable_level),  # use variable_label
-    stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n"),
-    variable_level = dplyr::recode(variable_level, "Male" = "M", "Female" = "F")
+    stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n")
   ) |> dplyr::select(-c("variable_label", "stat_string"))
 
 ```
@@ -122,16 +118,14 @@ ard_result <- ard_result |>
   dplyr::select(-c("context", "fmt_fn", "stat_label", "warning", "error"))
 ```
 
-Note that the ARD result is considerably larger than the rtables result (145 rows vs 120 rows). Here are a few differences:
+Note that the ARD result is larger than the rtables result. Here are a few differences:
 
-1.  ARDs compute statistics for all levels of a variable, even if, that level is not observed in the data. The rtables results however only contains the statistics that are in the resulting table (with unobserved levels pruned). We can remove any of the levels that are not in our comparison table to simplify. This includes the "UNKNOWN" level in `ETHNIC` and ">=65" in `AGEGR1`.
-
+1. When using `ard_stack` with a listed `by` variable, a univariate analysis is run with the by variable. Here, it is the "ARM" variable. We can remove those statistics as they are not in the rtables_result.
+2. 
 ```{r}
 ard_result <- ard_result |>  
 dplyr::filter(
-    !( (variable == "AGEGR1" & variable_level == ">=65") | 
-       (variable == "ETHNIC" & variable_level == "UNKNOWN") | 
-       (variable == "ARM") ) | 
+    !((variable == "ARM") ) | 
     is.na(variable_level)
   )|>
    dplyr::mutate(variable_level = dplyr::if_else(stat_name == 'N' & is.na(variable_level) & variable != "AGE", 'n', variable_level))
@@ -153,8 +147,8 @@ If dplyr is readily available, the `anti_join()` function can be used to isolate
 ```{r}
 library(dplyr)
 
-differences <- rtables_result %>% #start with the data.frames which contain greater number of rows.
-  dplyr::anti_join(ard_result, by = c("group1_level","group1", "variable", "variable_level", "stat_name"))  # Compare based on key columns
+differences <- ard_result %>% #start with the data.frames which contain greater number of rows.
+  dplyr::anti_join(rtables_result, by = c("group1_level","group1", "variable", "variable_level", "stat_name"))  # Compare based on key columns
 
 differences
 
