@@ -33,8 +33,8 @@ result[1:6, -c(1:3)]
 ## Calculaing AET02 statistics using the {cards} package
 
 In this example below we perform different data pre-processing for the different ARDs we want to create. 
-We then generate separate ARDs for the different sections of the AET02 table and then merge them all together. 
-
+We then generate separate ARDs for the different sections of the AET02 table and compare them as subsets.
+Note: If your table does not have an "overall" column, you can use the ARD creation steps at the bottom of the page (simplified code)
 ```{r}
 #| code-summary: "Show the code"
 
@@ -243,4 +243,88 @@ attr(ae_n_p_aedecod_rtables$stat, "label") <- NULL
 diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", "stat"))
 ```
 
+
+
+### ARD creation with no overall column
+
+```{r}
+library(cards)
+library(dplyr)
+
+# some data pre-processing
+adae <- syn_data$adae
+adsl <- syn_data$adsl
+
+# Keep only 1 record per patient
+adae_one_sub <- adae %>% 
+  filter(!duplicated(adae[c("USUBJID")]))
+
+# Keep only 1 record per patient for each AEBODSYS
+adae_one_sub_aebod <- adae %>% 
+  filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
+
+
+# ----- ARDS -----
+# Total number of patients with at least one adverse event  ## removing univariate analysis
+tot_pat_ae <- ard_categorical(
+  data = adae_one_sub,
+  variables = c(SAFFL),
+  by = c(ARM),
+  denominator = adsl,
+  statistic = everything() ~ c("n", "p")) |>
+  dplyr::mutate(
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+
+# Total number of AEs 
+tot_ae <- ard_categorical(
+  data = adae,
+  variables = c(SAFFL),
+  denominator = adsl,
+  by = ARM,
+  statistic = everything() ~ c("n")) |>
+  dplyr::mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+
+# Total number of patients with at least one adverse event within each AEBODSYS
+tot_pat_ae_aebod <- ard_categorical(
+  data = adae_one_sub_aebod,
+  variables = c(AEBODSYS),
+  by = c(ARM),
+  denominator = adsl,
+  statistic = everything() ~ c("n", "p")) |>
+  dplyr::mutate(
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
+
+# Total number of AEs for each AEBODSYS
+tot_ae_aebod <- ard_categorical(
+  data = adae,
+  variables = c(AEBODSYS),
+  by = c(ARM),
+  denominator = adsl,
+  statistic = everything() ~ c("n")) |> 
+  dplyr::mutate(
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+  
+
+# Count and Percent for each AEDECOD within each AEBODSYS
+ae_n_p_aedecod <- ard_stack_hierarchical(
+  data = adae,
+  id = "USUBJID",
+  variables = c(AEBODSYS, AEDECOD),
+  by = c(ARM),
+  denominator = adsl,
+  statistic = everything() ~ c("n", "p")) |> 
+  dplyr::filter(context == "hierarchical", 
+                variable == "AEDECOD") |>
+  dplyr::mutate(
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+
+
+# bind the ARDs
+final_aet02_ard <- dplyr::bind_rows(tot_pat_ae, tot_ae, tot_pat_ae_aebod, tot_ae_aebod, ae_n_p_aedecod) |> 
+  as.data.frame() |> 
+  dplyr::select(-c(context, warning, error))
+```
 
