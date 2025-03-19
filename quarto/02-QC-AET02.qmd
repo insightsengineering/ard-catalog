@@ -16,7 +16,6 @@ library(chevron)
 
 tlg_aet02 <- chevron:: aet02_main(syn_data, arm_var = "ARM", lbl_overall = "Overall ARM")
 tlg_aet02
-
 ```
 
 
@@ -146,11 +145,9 @@ We'll modify the rtables result to closely match the ARD result:
 2. Remove any columns that aren't in the ARD result (stat_name is being removed as it is a blank column)
 
 ```{r}
-
 rtables_result <- rtables_result %>%
   dplyr::rename(ARM = group2_level)%>%
   dplyr::select(-c("stat_name", "group2", "stat_string"))
-  
 ```
 
 
@@ -188,7 +185,6 @@ diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
 
 Total number of patients with at least one adverse event within each AEBODSYS
 ```{r}
-
 tot_pat_ae_aebod <- tot_pat_ae_aebod %>%
   dplyr::rename(ARM = group1_level) |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
@@ -204,13 +200,10 @@ tot_pat_ae_aebod_rtables <- rtables_result %>%
 attr(tot_pat_ae_aebod_rtables$stat, "label") <- NULL
 
 diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "variable_level", "stat"))
-
-
 ```
 
 Total number of AEs for each AEBODSYS
 ```{r}
-
 tot_ae_aebod <- tot_ae_aebod |>
   dplyr::select(c("ARM", "label", "stat"))
 
@@ -222,13 +215,10 @@ tot_ae_aebod_rtables <- rtables_result %>%
 attr(tot_ae_aebod_rtables$stat, "label") <- NULL
 
 diffdf(tot_ae_aebod, tot_ae_aebod_rtables, keys = c("ARM", "label", "stat"))
-
-
 ```
 Count and Percent for each AEDECOD within each AEBODSYS
 
 ```{r}
-
 ae_n_p_aedecod <- ae_n_p_aedecod |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM)) |>
   dplyr::select(c("ARM", "label", "stat"))
