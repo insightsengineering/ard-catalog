@@ -31,17 +31,14 @@ website:
     contents:
     - href: index.qmd
       text: Home
-    - section: "QCing with ARDS"
-      href: 01-QCing.qmd
-      contents:
-        - 01-QCing.qmd
-    - section: "ard-catalog"
-      contents:
-        - href: 02-DMT01.qmd
-          text: Demographics Table
-        - href: 03-AET02.qmd
-          text: Adverse Events Table
-
+    - href: quarto/01-QC-DMT01.qmd
+      text: Demographics Table
+    - href: quarto/02-QC-AET02.qmd
+      text: Adverse Events Table
+    - href: quarto/03-QC-LBT01.qmd
+      text: Lab Results Table
+    - href: quarto/04-QC-TTET01.qmd
+      text: Time-to-Event Table
 
 format:
   html:
