@@ -67,10 +67,10 @@ ard_event_rates <- bind_ard(
 # Calculate Time to Event
 ard_tte <- bind_ard(
   # calculate median
-  survfit(Surv(AVAL, 1-CNSR) ~ ARM, data = adtte) |>
+  survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.type = "plain") |>
   ard_survival_survfit(probs = 0.5), 
   # calculate quantiles
-  survfit(Surv(AVAL, 1-CNSR) ~ ARM, data = adtte) |>
+  survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.type = "plain") |>
   ard_survival_survfit(probs = c(0.25, 0.75)) |>
   filter(stat_name == "estimate"),
   # calculate range
@@ -81,7 +81,7 @@ ard_tte <- bind_ard(
 # set the reference arm
 ref_arm <- "A: Drug X"
 
-unstrat_coxph <- ard_pairwise(
+ard_unstrat_coxph <- ard_pairwise(
   adtte,
   variable = ARM,
   .f = \(df) {coxph(Surv(AVAL, is_event) ~ ARM, data = df, ties = "efron") |> 
@@ -92,26 +92,24 @@ unstrat_coxph <- ard_pairwise(
   bind_ard() # Pairwise Analysis generated a list of ARDs
 
 # calculate the pvalue
-log_p <- ard_pairwise(
+ard_pval <- ard_pairwise(
   adtte,
   variable = ARM,
   .f = \(df) {ard_survival_survdiff(survival::Surv(AVAL, is_event) ~ ARM, data = df) |>
       dplyr::filter(stat_name %in% "p.value")},
   include = ref_arm) # Pairwise Analysis generated a list of ARDs
 
-log_p <- do.call(rbind, log_p)
+ard_pval <- do.call(rbind, ard_pval)
 
 
 # 6 Months Risk Analysis
-surv_time <- survfit(Surv(AVAL, is_event) ~ ARM, adtte, conf.int = 0.95, conf.type = "plain") |> ard_survival_survfit(time = 6) |>
+ard_surv_time <- survfit(Surv(AVAL, is_event) ~ ARM, adtte, conf.int = 0.95, conf.type = "plain") |> ard_survival_survfit(time = 6) |>
   dplyr::filter(stat_name != "std.error")
 
 # difference in event free rate
-surv_time_diff <- survfit(Surv_CNSR() ~ ARM, data = adtte) |>
+ard_surv_time_diff <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value"))
-
-
 ```
 
 ### Statistics comparison
@@ -132,46 +130,76 @@ rtables_event_rate <-  rtables_results |>
   dplyr::mutate(stat_name = dplyr::recode(stat_name, "count" = "n"),
                 stat_name = dplyr::recode(stat_name, "fraction" = "p"))
 
-# time to event table ### need to simplify this code
+# time to event table
+# function to apply row-based transformation
+apply_row_transformation <- function(data, condition, values) {
+  data %>%
+    group_by(group = (variable_level == condition)) %>%
+    mutate(
+      row_num = row_number(),
+      variable_level = case_when(
+        group & row_number() %% 2 == 1 ~ values[1],  # Odd row in condition group
+        group & row_number() %% 2 == 0 ~ values[2],  # Even row in condition group
+        TRUE ~ variable_level  # Keep original value
+      )
+    ) %>%
+    ungroup() %>%
+    select(-group, -row_num)  # Remove temporary columns
+}
 
-rtables_time_to_event <- rtables_results |>
+rtables_tte <- rtables_results |>
   filter(variable == "time_to_event") |>
-  dplyr::rename(group1 = group2,
-                group1_level = group2_level,
-                # rename other vars to avoid error
-                group2 = group1,
-                group2_level = group1_level) |>
-  group_by(variable_level == "95% CI")%>%
- mutate(
-    variable_level = case_when(
-      variable_level == "95% CI" & row_number() == 1 ~ "conf.low",
-      variable_level == "95% CI" & row_number() == 2 ~ "conf.high",
-      TRUE ~ variable_level  # Keep original values for rows that aren't "95% CI"
-    )
-  ) %>%
-  ungroup() |> group_by(variable_level == "Range") %>%
- mutate(
-    variable_level = case_when(
-      variable_level == "Range" & row_number() == 1 ~ "min",
-      variable_level == "Range" & row_number() == 2 ~ "max",
-      TRUE ~ variable_level  # Keep original values for rows that aren't "95% CI"
-    )) |>
-  ungroup() |>
-  group_by(variable_level == "25% and 75%-ile") %>%
- mutate(
-    variable_level = case_when(
-      variable_level == "Range" & row_number() == 1 ~ "0.25",
-      variable_level == "Range" & row_number() == 2 ~ "0.75",
-      TRUE ~ variable_level  # Keep original values for rows that aren't "95% CI"
-    )) |>
-  ungroup() |>
+  rename(group1 = group2,
+         group1_level = group2_level,
+         group2 = group1,
+         group2_level = group1_level) |>
+  apply_row_transformation("95% CI", c("conf.low", "conf.high")) |>
+  apply_row_transformation("Range", c("min", "max")) |>
+  apply_row_transformation("25% and 75%-ile", c("0.25", "0.75")) |>
   mutate(variable_level = recode(variable_level, "Median" = "estimate")) |>
-dplyr::select(c(group1, group1_level, variable_level, stat_name, stat))
+  dplyr::select(c(group1, group1_level, variable_level, stat)) |>
+  rename(stat_name = variable_level)
+
+# Unstratified coxph
+rtables_unstrat_coxph <- rtables_results |>
+  filter(variable == "coxph_unstratified" & !is.na(stat) & variable_level !="pvalue") |>
+  select("group2", "group2_level", "variable_level", "stat") |>
+  apply_row_transformation("hr_ci", c("conf.low", "conf.high")) |>
+  rename(variable = group2,
+         variable_level = group2_level,
+         stat_name = variable_level) |>
+  mutate(stat_name = dplyr::recode(stat_name, "hr" = "estimate"))
+
+# logpvalue
+rtables_pval <- rtables_results |>
+  filter(variable_level =="pvalue" & !is.na(stat)) |>
+  select("group2_level", "stat") |>
+  rename("rowname"="group2_level")
+
+# surv time
+rtables_surv_time <- rtables_results |>
+  filter(variable == "surv_6") |>
+  select(c("group2_level", "variable_level", "stat")) |>
+  apply_row_transformation("rate_ci", c("conf.low", "conf.high")) |>
+  rename(group1_level = group2_level,
+         stat_name = variable_level) |>
+  mutate(stat_name = dplyr::recode(stat_name, "pt_at_risk" = "n.risk",
+                                   "event_free_rate"= "estimate"))
+
+rtables_surv_diff <- rtables_results |>
+  filter(variable == "surv_diff_6" & !is.na(stat)) |>
+  select(c("group2_level", "variable_level", "stat")) |>
+  apply_row_transformation("rate_diff_ci", c("conf.low", "conf.high")) |>
+  rename(group1_level = group2_level,
+         stat_name = variable_level) |>
+ mutate(stat_name = dplyr::recode(stat_name, "rate_diff" = "estimate",
+                                   "ztest_pval"= "p.value"))
 ```
 
 ##### 2. ARD reformat
 
 ```{r}
+# Event Rates Table
 ard_event_rates <- ard_event_rates |>
    mutate(
     variable = recode(variable, "is_event" = "IS_EVENT"),
@@ -181,11 +209,56 @@ ard_event_rates <- ard_event_rates |>
                 ) |>
   dplyr::select(c("group1", "group1_level", "variable", "stat_name", "stat"))
 
+# Time to Event Table
 ard_tte <- ard_tte |>
-  mutate(
-                group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-                 stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_))
-                )
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+         stat_name = if_else(variable_level %in% c("0.25", "0.75") & stat_name == "estimate", variable_level, stat_name)
+                ) |>
+  dplyr::select(c("group1", "group1_level", "stat_name", "stat"))
+
+# Unstratified Coxph
+ard_unstrat_coxph <- ard_unstrat_coxph |>
+  mutate(variable = purrr::map_chr(variable, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_))
+                ) |>
+  dplyr::select(c("variable", "variable_level", "stat_name", "stat"))
+attr(ard_unstrat_coxph$variable_level, "names") <- NULL
+attr(ard_unstrat_coxph$stat, "names") <- NULL
+
+# log_pval
+ard_pval <- ard_pval |>
+  tibble::rownames_to_column() |>
+  select(c("rowname", "stat")) |>
+   mutate(stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+ard_pval$rowname <-  sub('.*vs\\.\\s*', "", ard_pval$rowname) 
+ard_pval$rowname <-  sub("^'(.*)'$", "\\1", ard_pval$rowname) 
+
+# Surv Time Point
+ard_surv_time <- ard_surv_time |>
+  select("group1_level", "stat_name", "stat") |>
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+    stat = case_when(
+      stat_name == "estimate" ~ stat * 100,   
+      stat_name == "conf.low" ~ stat * 100,   
+      stat_name == "conf.high" ~ stat * 100,  
+      TRUE ~ stat                                    
+    ))
+
+# Surv Diff
+ard_surv_time_diff <- ard_surv_time_diff |>
+  select("group1_level", "stat_name", "stat") |>
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+    stat = case_when(
+      stat_name == "estimate" ~ stat * 100,   
+      stat_name == "conf.low" ~ stat * 100,   
+      stat_name == "conf.high" ~ stat * 100,  
+      TRUE ~ stat                                    
+    ))
 ```
 
 
@@ -193,13 +266,26 @@ ard_tte <- ard_tte |>
 #### 3. Compare programmatically
 
 ```{r}
-# library(diffdf)
-# 
-# # event rate tables
-# diffdf(rtables_event_rate, ard_event_rates, keys = c("group1", "group1_level", "variable", "stat_name", "stat"), suppress_warnings = TRUE)
-# 
-# # time to event tables
-# diffdf(rtables_time_to_event, ard_tte, keys = c("group1", "group1_level", "variable_level", "stat_name", "stat"), suppress_warnings = TRUE)
+library(diffdf)
+
+# event rate tables
+diffdf(rtables_event_rate, ard_event_rates, keys = c("group1", "group1_level", "variable", "stat_name", "stat"), suppress_warnings = TRUE)
+
+# time to event tables
+diffdf(rtables_tte, ard_tte, keys = c("group1", "group1_level", "stat_name", "stat"), suppress_warnings = TRUE)
+
+# Unstratified coxph
+diffdf(rtables_unstrat_coxph, ard_unstrat_coxph, keys = c("variable", "variable_level", "stat_name", "stat"), suppress_warnings = TRUE)
+
+# Log pvalue
+diffdf(rtables_pval, ard_pval, keys = c("rowname", "stat"), suppress_warnings = TRUE)
+
+# Surv Timepoint
+diffdf(rtables_surv_time, ard_surv_time, keys = c("group1_level", "stat_name", "stat"), suppress_warnings = TRUE)
+
+# Surv Diff
+diffdf(rtables_surv_diff, ard_surv_time_diff, keys = c("group1_level", "stat_name", "stat"), suppress_warnings = TRUE)
+
 ```
 
 
