@@ -367,56 +367,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Patient Event Rates</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_categorical</span>(adtte, <span class="at">strata =</span> <span class="fu">c</span>(ARM), <span class="at">variable =</span> <span class="fu">c</span>(is_event), <span class="at">statistic =</span> <span class="fu">everything</span>()<span class="sc">~</span><span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>)),</span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Earliest Contributing Event</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_categorical</span>(adtte <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(is_event <span class="sc">==</span> <span class="cn">TRUE</span>), <span class="at">strata =</span> <span class="fu">c</span>(ARM), <span class="at">variable =</span> <span class="fu">c</span>(EVNTDESC), <span class="at">statistic =</span> <span class="fu">everything</span>()<span class="sc">~</span><span class="fu">c</span>(<span class="st">"n"</span>))</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Time to Event</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>ard_tte <span class="ot">&lt;-</span> cards<span class="sc">::</span><span class="fu">bind_ard</span>(</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate median</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit</span>(<span class="at">probs =</span> <span class="fl">0.5</span>), </span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate quantiles</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit</span>(<span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(stat_name <span class="sc">==</span> <span class="st">"estimate"</span>),</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate range</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_continuous</span>(adtte, <span class="at">by =</span> <span class="fu">c</span>(ARM), <span class="at">variable =</span> <span class="fu">c</span>(AVAL), <span class="at">statistic =</span> <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"min"</span>, <span class="st">"max"</span>)))</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Unstratified coxph</span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co"># set the reference arm</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>ref_arm <span class="ot">&lt;-</span> <span class="st">"A: Drug X"</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>ard_unstrat_coxph <span class="ot">&lt;-</span> <span class="fu">ard_pairwise</span>(</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  adtte,</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> ARM,</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">.f =</span> \(df) {<span class="fu">coxph</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> df, <span class="at">ties =</span> <span class="st">"efron"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ard_regression</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>) <span class="sc">&amp;</span> variable_level <span class="sc">!=</span> ref_arm)},</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> ref_arm</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_ard</span>() <span class="co"># Pairwise Analysis generated a list of ARDs</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the pvalue</span></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>ard_pval <span class="ot">&lt;-</span> <span class="fu">ard_pairwise</span>(</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  adtte,</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> ARM,</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">.f =</span> \(df) {<span class="fu">ard_survival_survdiff</span>(survival<span class="sc">::</span><span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> df) <span class="sc">|&gt;</span></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="st">"p.value"</span>)},</span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> ref_arm) <span class="co"># Pairwise Analysis generated a list of ARDs</span></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>ard_pval <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, ard_pval)</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 Months Risk Analysis</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>ard_surv_time <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, adtte, <span class="at">conf.int =</span> <span class="fl">0.95</span>, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span> <span class="fu">ard_survival_survfit</span>(<span class="at">time =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">!=</span> <span class="st">"std.error"</span>)</span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="co"># difference in event free rate</span></span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>ard_surv_time_diff <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.int =</span> <span class="fl">0.95</span>, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit_diff</span>(<span class="at">times =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>, <span class="st">"p.value"</span>))</span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ard_surv_time_diff, <span class="at">n=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_categorical</span>(adtte <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(is_event <span class="sc">==</span> <span class="cn">TRUE</span>), <span class="at">strata =</span> <span class="fu">c</span>(ARM), <span class="at">variable =</span> <span class="fu">c</span>(EVNTDESC), <span class="at">statistic =</span> <span class="fu">everything</span>()<span class="sc">~</span><span class="fu">c</span>(<span class="st">"n"</span>)))</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Time to Event</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>ard_tte <span class="ot">&lt;-</span> cards<span class="sc">::</span><span class="fu">bind_ard</span>(</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate median</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit</span>(<span class="at">probs =</span> <span class="fl">0.5</span>), </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate quantiles</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit</span>(<span class="at">probs =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(stat_name <span class="sc">==</span> <span class="st">"estimate"</span>),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate range</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_continuous</span>(adtte, <span class="at">by =</span> <span class="fu">c</span>(ARM), <span class="at">variable =</span> <span class="fu">c</span>(AVAL), <span class="at">statistic =</span> <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"min"</span>, <span class="st">"max"</span>))))</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Unstratified coxph</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co"># set the reference arm</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>ref_arm <span class="ot">&lt;-</span> <span class="st">"A: Drug X"</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>ard_unstrat_coxph <span class="ot">&lt;-</span> <span class="fu">ard_pairwise</span>(</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  adtte,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> ARM,</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">.f =</span> \(df) {<span class="fu">coxph</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> df, <span class="at">ties =</span> <span class="st">"efron"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ard_regression</span>(<span class="at">exponentiate =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>) <span class="sc">&amp;</span> variable_level <span class="sc">!=</span> ref_arm)},</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> ref_arm) <span class="sc">|&gt;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_ard</span>() <span class="co"># Pairwise Analysis generated a list of ARDs</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the pvalue</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>ard_pval <span class="ot">&lt;-</span> <span class="fu">ard_pairwise</span>(</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>  adtte,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> ARM,</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">.f =</span> \(df) {<span class="fu">ard_survival_survdiff</span>(survival<span class="sc">::</span><span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> df) <span class="sc">|&gt;</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="st">"p.value"</span>)},</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">include =</span> ref_arm) <span class="co"># Pairwise Analysis generated a list of ARDs</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>ard_pval <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, ard_pval)</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co"># 6 Months Risk Analysis</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>ard_surv_time <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, adtte, <span class="at">conf.int =</span> <span class="fl">0.95</span>, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span> <span class="fu">ard_survival_survfit</span>(<span class="at">time =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(stat_name <span class="sc">!=</span> <span class="st">"std.error"</span>)</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="co"># difference in event free rate</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>ard_surv_time_diff <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(AVAL, is_event) <span class="sc">~</span> ARM, <span class="at">data =</span> adtte, <span class="at">conf.int =</span> <span class="fl">0.95</span>, <span class="at">conf.type =</span> <span class="st">"plain"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ard_survival_survfit_diff</span>(<span class="at">times =</span> <span class="dv">6</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(stat_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"estimate"</span>, <span class="st">"conf.low"</span>, <span class="st">"conf.high"</span>, <span class="st">"p.value"</span>))</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ard_surv_time_diff, <span class="at">n=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="kable-table">
 <table class="caption-top table table-sm table-striped small">
@@ -526,8 +523,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># function to apply row-based transformation</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>apply_row_transformation <span class="ot">&lt;-</span> <span class="cf">function</span>(data, condition, values) {</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="at">group =</span> (variable_level <span class="sc">==</span> condition)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  data <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="at">group =</span> (variable_level <span class="sc">==</span> condition)) <span class="sc">|&gt;</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">row_num =</span> <span class="fu">row_number</span>(),</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">variable_level =</span> <span class="fu">case_when</span>(</span>
@@ -535,8 +532,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        group <span class="sc">&amp;</span> <span class="fu">row_number</span>() <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> values[<span class="dv">2</span>],  <span class="co"># Even row in condition group</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="cn">TRUE</span> <span class="sc">~</span> variable_level  <span class="co"># Keep original value</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>group, <span class="sc">-</span>row_num)  <span class="co"># Remove temporary columns</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -598,16 +595,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">variable_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(variable_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">stat_name =</span> <span class="fu">if_else</span>(variable_level <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"0.25"</span>, <span class="st">"0.75"</span>) <span class="sc">&amp;</span> stat_name <span class="sc">==</span> <span class="st">"estimate"</span>, variable_level, stat_name)</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                ) <span class="sc">|&gt;</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>))</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co"># compare stats</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  rtables_tte, </span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  ard_tte, </span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">stat_name =</span> <span class="fu">if_else</span>(variable_level <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"0.25"</span>, <span class="st">"0.75"</span>) <span class="sc">&amp;</span> stat_name <span class="sc">==</span> <span class="st">"estimate"</span>, variable_level, stat_name)) <span class="sc">|&gt;</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>))</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># compare stats</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  rtables_tte, </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  ard_tte, </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -691,15 +687,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"estimate"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,   </span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"conf.low"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,   </span>
 <span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"conf.high"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,  </span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> stat                                    </span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare stats</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  rtables_surv_time, </span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  ard_surv_time, </span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> stat))</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare stats</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  rtables_surv_time, </span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  ard_surv_time, </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -726,15 +721,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"estimate"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,   </span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"conf.low"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,   </span>
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>      stat_name <span class="sc">==</span> <span class="st">"conf.high"</span> <span class="sc">~</span> stat <span class="sc">*</span> <span class="dv">100</span>,  </span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> stat                                    </span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    ))</span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co"># compare stats</span></span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  rtables_surv_diff, </span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  ard_surv_time_diff, </span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> stat))</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co"># compare stats</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  rtables_surv_diff, </span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  ard_surv_time_diff, </span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>), </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Differences found between the objects!
 

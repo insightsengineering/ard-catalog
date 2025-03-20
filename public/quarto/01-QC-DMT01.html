@@ -708,7 +708,7 @@ Levels: A: Drug X B: Placebo C: Combination</code></pre>
 </div>
 <p>The <code>anti_join()</code> function from the {dplyr} package can be used to isolate the differences between the two data.frames for closer analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>differences <span class="ot">&lt;-</span> ard_result <span class="sc">%&gt;%</span> <span class="co">#start with the data.frames which contain greater number of rows.</span></span>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>differences <span class="ot">&lt;-</span> ard_result <span class="sc">|&gt;</span> <span class="co">#start with the data.frames which contain greater number of rows.</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">anti_join</span>(rtables_result, </span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Compare based on key columns</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

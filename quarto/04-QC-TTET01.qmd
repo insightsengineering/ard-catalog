@@ -121,8 +121,8 @@ To ensure the {rtables} and ARD results and compatiable for comparison, some ref
 #| code-fold: false
 # function to apply row-based transformation
 apply_row_transformation <- function(data, condition, values) {
-  data %>%
-    group_by(group = (variable_level == condition)) %>%
+  data |>
+    group_by(group = (variable_level == condition)) |>
     mutate(
       row_num = row_number(),
       variable_level = case_when(
@@ -130,8 +130,8 @@ apply_row_transformation <- function(data, condition, values) {
         group & row_number() %% 2 == 0 ~ values[2],  # Even row in condition group
         TRUE ~ variable_level  # Keep original value
       )
-    ) %>%
-    ungroup() %>%
+    ) |>
+    ungroup() |>
     select(-group, -row_num)  # Remove temporary columns
 }
 ```

@@ -309,92 +309,93 @@ cl B.2
 <p>In the code below, we perform different data pre-processing for the different ARDs we want to create. Then, we generate separate ARDs using the {cards} package for the different sections of the AET02 table and compare them as subsets. Note: If your table does not have an “overall” column, you can use the ARD creation steps at the bottom of the page using primarily <code>ard_categorical()</code>. <code>ard_hierarchical()</code> is useful here to calculate the statistics for the overall column and allows for better filtering using the “context” column.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># data pre-processing</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>adae <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adae</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adsl</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>adae_one_sub <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>)]))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient for each AEBODSYS</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>adae_one_sub_aebod <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>, <span class="st">"AEBODSYS"</span>)]))</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ----- ARDS -----</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event  </span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>tot_pat_ae <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>),</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>))) <span class="co"># convert list to numeric</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs </span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>tot_ae <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical_count</span>(</span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> ARM,</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical_count"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)), </span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event within each AEBODSYS</span></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub_aebod,</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>) <span class="sc">|&gt;</span>  <span class="do">## removing univariate analysis</span></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs for each AEBODSYS</span></span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical_count</span>(</span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical_count"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARM =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(ARM, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="co"># Count and Percent for each AEDECOD within each AEBODSYS</span></span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>ae_n_p_aedecod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS, AEDECOD),</span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>),</span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>, </span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>                variable <span class="sc">==</span> <span class="st">"AEDECOD"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert list numeric</span></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data pre-processing. filter observations with ANL01FL = "Y"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>adae <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adae <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(ANL01FL <span class="sc">==</span> <span class="st">"Y"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adsl <span class="sc">|&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(ANL01FL <span class="sc">==</span> <span class="st">"Y"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>adae_one_sub <span class="ot">&lt;-</span> adae <span class="sc">|&gt;</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>)]))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient for each AEBODSYS</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>adae_one_sub_aebod <span class="ot">&lt;-</span> adae <span class="sc">|&gt;</span> </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>, <span class="st">"AEBODSYS"</span>)]))</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># ----- ARDS -----</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event  </span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>tot_pat_ae <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>),</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>))) <span class="co"># convert list to numeric</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs </span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>tot_ae <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical_count</span>(</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(SAFFL),</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> ARM,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical_count"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)), </span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event within each AEBODSYS</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae_one_sub_aebod,</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>) <span class="sc">|&gt;</span>  <span class="do">## removing univariate analysis</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">group1_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group1_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of AEs for each AEBODSYS</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical_count</span>(</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS),</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical_count"</span>) <span class="sc">|&gt;</span> <span class="do">## removing univariate analysis</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert lists to character and numeric</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARM =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(ARM, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="co"># Count and Percent for each AEDECOD within each AEBODSYS</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>ae_n_p_aedecod <span class="ot">&lt;-</span> <span class="fu">ard_stack_hierarchical</span>(</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> adae,</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="st">"USUBJID"</span>,</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> <span class="fu">c</span>(AEBODSYS, AEDECOD),</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(ARM),</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">denominator =</span> adsl,</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">statistic =</span> <span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">c</span>(<span class="st">"n"</span>, <span class="st">"p"</span>),</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">overall =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shuffle_ard</span>(<span class="at">trim =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(context <span class="sc">==</span> <span class="st">"hierarchical"</span>, </span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>                variable <span class="sc">==</span> <span class="st">"AEDECOD"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert list numeric</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="statistics-comparison" class="level3">
@@ -407,8 +408,8 @@ cl B.2
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rtables_result <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">ARM =</span> group2_level)<span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>rtables_result <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">ARM =</span> group2_level)<span class="sc">|&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">"stat_name"</span>, <span class="st">"group2"</span>))</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rtables_result, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -538,12 +539,11 @@ cl B.2
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tot_pat_ae <span class="ot">&lt;-</span> tot_pat_ae <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable_label <span class="sc">==</span> <span class="st">"Total number of patients with at least one adverse event"</span> <span class="sc">&amp;</span> variable <span class="sc">==</span> <span class="st">"USUBJID"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable_label <span class="sc">==</span> <span class="st">"Total number of patients with at least one adverse event"</span> <span class="sc">&amp;</span> variable <span class="sc">==</span> <span class="st">"USUBJID"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(diffdf)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(tot_pat_ae, tot_pat_ae_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(tot_pat_ae, tot_pat_ae_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -557,11 +557,11 @@ cl B.2
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">ARM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(ARM), <span class="st">"Overall ARM"</span>, ARM))<span class="sc">|&gt;</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>tot_ae_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"USUBJID"</span> <span class="sc">&amp;</span> variable_label <span class="sc">==</span> <span class="st">"Overall total number of events"</span>)<span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>tot_ae_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"USUBJID"</span> <span class="sc">&amp;</span> variable_label <span class="sc">==</span> <span class="st">"Overall total number of events"</span>)<span class="sc">|&gt;</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(tot_ae, tot_ae_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(tot_ae, tot_ae_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -570,7 +570,7 @@ cl B.2
 <section id="total-number-of-patients-with-at-least-one-adverse-event-within-each-aebodsys" class="level4">
 <h4 class="anchored" data-anchor-id="total-number-of-patients-with-at-least-one-adverse-event-within-each-aebodsys">Total number of patients with at least one adverse event within each AEBODSYS</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod <span class="ot">&lt;-</span> tot_pat_ae_aebod <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod <span class="ot">&lt;-</span> tot_pat_ae_aebod <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">ARM =</span> group1_level) <span class="sc">|&gt;</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">ARM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(ARM), <span class="st">"Overall ARM"</span>, ARM))<span class="sc">|&gt;</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat"</span>)) <span class="sc">|&gt;</span></span>
@@ -578,12 +578,12 @@ cl B.2
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ARM =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(ARM, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(variable_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)))</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(variable_level <span class="sc">==</span> <span class="st">"unique"</span> <span class="sc">&amp;</span> variable_label <span class="sc">==</span> <span class="st">"Total number of patients with at least one adverse event"</span> <span class="sc">&amp;</span> group1 <span class="sc">==</span> <span class="st">"AEBODSYS"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>tot_pat_ae_aebod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>(variable_level <span class="sc">==</span> <span class="st">"unique"</span> <span class="sc">&amp;</span> variable_label <span class="sc">==</span> <span class="st">"Total number of patients with at least one adverse event"</span> <span class="sc">&amp;</span> group1 <span class="sc">==</span> <span class="st">"AEBODSYS"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"variable"</span>, <span class="st">"stat"</span>, <span class="st">"group1_level"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">variable_level =</span> group1_level)</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -595,12 +595,12 @@ cl B.2
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod <span class="ot">&lt;-</span> tot_ae_aebod <span class="sc">|&gt;</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable_label <span class="sc">==</span> <span class="st">"Total number of events"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>tot_ae_aebod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable_label <span class="sc">==</span> <span class="st">"Total number of events"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">label =</span> group1_level) <span class="sc">|&gt;</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(tot_ae_aebod, tot_ae_aebod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(tot_ae_aebod, tot_ae_aebod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -613,12 +613,12 @@ cl B.2
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">ARM =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(ARM), <span class="st">"Overall ARM"</span>, ARM)) <span class="sc">|&gt;</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ae_n_p_aedecod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">%&gt;%</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"AEDECOD"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>ae_n_p_aedecod_rtables <span class="ot">&lt;-</span> rtables_result <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"AEDECOD"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">label =</span> variable_label) <span class="sc">|&gt;</span></span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(ae_n_p_aedecod, ae_n_p_aedecod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(ae_n_p_aedecod, ae_n_p_aedecod_rtables, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"ARM"</span>, <span class="st">"label"</span>, <span class="st">"stat"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -629,20 +629,20 @@ cl B.2
 <h3 class="anchored" data-anchor-id="ard-creation-with-no-overall-column">ARD creation with no overall column</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># some data pre-processing</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>adae <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adae</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adsl</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>adae_one_sub <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>)]))</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient for each AEBODSYS</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>adae_one_sub_aebod <span class="ot">&lt;-</span> adae <span class="sc">%&gt;%</span> </span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>, <span class="st">"AEBODSYS"</span>)]))</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># data pre-processing. filter observations with ANL01FL = "Y"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>adae <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adae <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(ANL01FL <span class="sc">==</span> <span class="st">"Y"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>adsl <span class="ot">&lt;-</span> syn_data<span class="sc">$</span>adsl <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(ANL01FL <span class="sc">==</span> <span class="st">"Y"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>adae_one_sub <span class="ot">&lt;-</span> adae <span class="sc">|&gt;</span> </span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>)]))</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only 1 record per patient for each AEBODSYS</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>adae_one_sub_aebod <span class="ot">&lt;-</span> adae <span class="sc">|&gt;</span> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">duplicated</span>(adae[<span class="fu">c</span>(<span class="st">"USUBJID"</span>, <span class="st">"AEBODSYS"</span>)]))</span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># ----- ARDS -----</span></span>
 <span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of patients with at least one adverse event  ## removing univariate analysis</span></span>

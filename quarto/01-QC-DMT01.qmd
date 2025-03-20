@@ -153,7 +153,7 @@ The `anti_join()` function from the {dplyr} package can be used to isolate the d
 #| code-fold: false
 #| code-summary: "Show the code"
 #| message: false
-differences <- ard_result %>% #start with the data.frames which contain greater number of rows.
+differences <- ard_result |> #start with the data.frames which contain greater number of rows.
   dplyr::anti_join(rtables_result, 
                    # Compare based on key columns
                    by = c("group1_level","group1", "variable", "variable_level", "stat_name")) 

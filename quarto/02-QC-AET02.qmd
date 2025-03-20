@@ -48,17 +48,19 @@ Note: If your table does not have an "overall" column, you can use the ARD creat
 
 library(cards)
 
-# data pre-processing
-adae <- syn_data$adae
-adsl <- syn_data$adsl
+# data pre-processing. filter observations with ANL01FL = "Y"
+adae <- syn_data$adae |>
+  dplyr::filter(ANL01FL == "Y")
+adsl <- syn_data$adsl |>
+  dplyr::filter(ANL01FL == "Y")
 
 # Keep only 1 record per patient
-adae_one_sub <- adae %>% 
-  filter(!duplicated(adae[c("USUBJID")]))
+adae_one_sub <- adae |> 
+  dplyr::filter(!duplicated(adae[c("USUBJID")]))
 
 # Keep only 1 record per patient for each AEBODSYS
-adae_one_sub_aebod <- adae %>% 
-  filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
+adae_one_sub_aebod <- adae |> 
+  dplyr::filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
 
 # ----- ARDS -----
 # Total number of patients with at least one adverse event  
@@ -143,8 +145,8 @@ We'll modify the rtables result to closely match the ARD result:
   2. Remove any columns that aren't in the ARD result (stat_name is being removed as it is a blank column)
 
 ```{r}
-rtables_result <- rtables_result %>%
-  dplyr::rename(ARM = group2_level)%>%
+rtables_result <- rtables_result |>
+  dplyr::rename(ARM = group2_level)|>
   dplyr::select(-c("stat_name", "group2"))
 
 head(rtables_result, n=10)
@@ -159,8 +161,8 @@ Because the subsets of AET02 table are already separated in the ARDs, we can sub
 #| code-fold: false
 tot_pat_ae <- tot_pat_ae |> dplyr::select(c("ARM", "stat"))
 
-tot_pat_ae_rtables <- rtables_result %>%
-  filter(variable_label == "Total number of patients with at least one adverse event" & variable == "USUBJID") |>
+tot_pat_ae_rtables <- rtables_result |>
+  dplyr::filter(variable_label == "Total number of patients with at least one adverse event" & variable == "USUBJID") |>
   dplyr::select("ARM", "stat")
 
 diffdf::diffdf(tot_pat_ae, tot_pat_ae_rtables, keys = c("ARM", "stat"))
@@ -174,8 +176,8 @@ tot_ae <- tot_ae |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
   dplyr::select(c("ARM", "stat"))
 
-tot_ae_rtables <- rtables_result %>%
-  filter(variable == "USUBJID" & variable_label == "Overall total number of events")|>
+tot_ae_rtables <- rtables_result |>
+  dplyr::filter(variable == "USUBJID" & variable_label == "Overall total number of events")|>
   dplyr::select("ARM", "stat")
 
 diffdf::diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
@@ -186,7 +188,7 @@ diffdf::diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
-tot_pat_ae_aebod <- tot_pat_ae_aebod %>%
+tot_pat_ae_aebod <- tot_pat_ae_aebod |>
   dplyr::rename(ARM = group1_level) |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
   dplyr::select(c("ARM", "variable", "variable_level", "stat")) |>
@@ -194,8 +196,8 @@ tot_pat_ae_aebod <- tot_pat_ae_aebod %>%
     ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
     variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
 
-tot_pat_ae_aebod_rtables <- rtables_result %>%
-   filter(variable_level == "unique" & variable_label == "Total number of patients with at least one adverse event" & group1 == "AEBODSYS") |>
+tot_pat_ae_aebod_rtables <- rtables_result |>
+   dplyr::filter(variable_level == "unique" & variable_label == "Total number of patients with at least one adverse event" & group1 == "AEBODSYS") |>
   dplyr::select(c("ARM", "variable", "stat", "group1_level")) |>
   dplyr::rename(variable_level = group1_level)
 
@@ -209,8 +211,8 @@ diffdf::diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "vari
 tot_ae_aebod <- tot_ae_aebod |>
   dplyr::select(c("ARM", "label", "stat"))
 
-tot_ae_aebod_rtables <- rtables_result %>%
-  filter(variable_label == "Total number of events") |>
+tot_ae_aebod_rtables <- rtables_result |>
+  dplyr::filter(variable_label == "Total number of events") |>
     dplyr::rename(label = group1_level) |>
   dplyr::select(c("ARM", "label", "stat"))
 
@@ -225,8 +227,8 @@ ae_n_p_aedecod <- ae_n_p_aedecod |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM)) |>
   dplyr::select(c("ARM", "label", "stat"))
 
-ae_n_p_aedecod_rtables <- rtables_result %>%
-  filter(variable == "AEDECOD") |>
+ae_n_p_aedecod_rtables <- rtables_result |>
+  dplyr::filter(variable == "AEDECOD") |>
     dplyr::rename(label = variable_label) |>
   dplyr::select(c("ARM", "label", "stat"))
 
@@ -241,18 +243,19 @@ diffdf::diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", 
 #| message: false
 library(cards)
 
-# some data pre-processing
-adae <- syn_data$adae
-adsl <- syn_data$adsl
+# data pre-processing. filter observations with ANL01FL = "Y"
+adae <- syn_data$adae |>
+  dplyr::filter(ANL01FL == "Y")
+adsl <- syn_data$adsl |>
+  dplyr::filter(ANL01FL == "Y")
 
 # Keep only 1 record per patient
-adae_one_sub <- adae %>% 
-  filter(!duplicated(adae[c("USUBJID")]))
+adae_one_sub <- adae |> 
+  dplyr::filter(!duplicated(adae[c("USUBJID")]))
 
 # Keep only 1 record per patient for each AEBODSYS
-adae_one_sub_aebod <- adae %>% 
-  filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
-
+adae_one_sub_aebod <- adae |> 
+  dplyr::filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
 
 # ----- ARDS -----
 # Total number of patients with at least one adverse event  ## removing univariate analysis
