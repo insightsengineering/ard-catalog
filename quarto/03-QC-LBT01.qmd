@@ -52,7 +52,6 @@ We'll keep the stats for the overall column in a separate data.frame to generali
 #| message: false
 #| code-summary: "Show the code"
 library(cards)
-library(dplyr)
 
 adlb <- chevron::syn_data$adlb
 
@@ -108,7 +107,6 @@ rtables_result_overall <- rtables_result |>
 rtables_result <- rtables_result |>
   dplyr::filter(group1_level != "Overall ARM")
 ```
-
 Based on dimensions alone - we can see that tables likely generated similar results
 ```{r, eval=TRUE}
 print("rtables Dimensions")
@@ -118,13 +116,11 @@ dim(ard_result)
 ```
 
 ##### B. ARD reformat
-
 We'll also need some format adjustments for the ARD object. Primarily, converting lists to vectors (character or numeric) to match the rtables_result format. Not doing so will result in an incompatible comparison errors in `diffdf()`.
 
 1.  Select columns relevant to comparison
 2.  Convert any list columns to character and numeric
 3.  Convert any `NaN` stats to `NA` to match {rtables}
-
 ```{r}
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
@@ -149,16 +145,16 @@ ard_overall <- ard_overall |>
   stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
   stat = dplyr::recode(stat, `NaN` = NA_real_)) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))
+
+head(ard_result, n=10)
 ```
 
 #### C. Compare programmatically
-
 Use the diffdf package to compare the results.
-
 ```{r, eval=TRUE}
-library(diffdf)
-
-diffdf(ard_result, 
+#| code-summary: "Show the code"
+#| code-fold: false
+diffdf::diffdf(ard_result, 
        rtables_result,
        keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
        suppress_warnings = TRUE)
@@ -166,9 +162,10 @@ diffdf(ard_result,
 
 
 ##### Compare the overall_arm
-
 ```{r, eval=TRUE}
-diffdf(ard_overall, 
+#| code-summary: "Show the code"
+#| code-fold: false
+diffdf::diffdf(ard_overall, 
        rtables_result_overall, 
        keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
        suppress_warnings = TRUE)

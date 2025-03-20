@@ -252,22 +252,21 @@ Alanine Aminotransferase Measurement
 <p>We’ll keep the stats for the overall column in a separate data.frame to generalize this workflow.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cards)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>adlb <span class="ot">&lt;-</span> chevron<span class="sc">::</span>syn_data<span class="sc">$</span>adlb</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ard_result <span class="ot">&lt;-</span> <span class="fu">ard_continuous</span>(adlb, </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by =</span> <span class="fu">c</span>(ACTARM, PARAMCD, AVISIT), </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">variables =</span> <span class="fu">c</span>(AVAL, CHG), </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                             <span class="at">statistic =</span> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">list</span>(<span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"N"</span>, <span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>))))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate overall statistics</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>ard_overall <span class="ot">&lt;-</span> <span class="fu">ard_continuous</span>(adlb, </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by =</span> <span class="fu">c</span>(PARAMCD, AVISIT), <span class="co"># note arm var is removed</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                             <span class="at">variables =</span> <span class="fu">c</span>(AVAL, CHG), </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                             <span class="at">statistic =</span> </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">list</span>(<span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"N"</span>, <span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>adlb <span class="ot">&lt;-</span> chevron<span class="sc">::</span>syn_data<span class="sc">$</span>adlb</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ard_result <span class="ot">&lt;-</span> <span class="fu">ard_continuous</span>(adlb, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by =</span> <span class="fu">c</span>(ACTARM, PARAMCD, AVISIT), </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                             <span class="at">variables =</span> <span class="fu">c</span>(AVAL, CHG), </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                             <span class="at">statistic =</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">list</span>(<span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"N"</span>, <span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>))))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate overall statistics</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>ard_overall <span class="ot">&lt;-</span> <span class="fu">ard_continuous</span>(adlb, </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by =</span> <span class="fu">c</span>(PARAMCD, AVISIT), <span class="co"># note arm var is removed</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                             <span class="at">variables =</span> <span class="fu">c</span>(AVAL, CHG), </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                             <span class="at">statistic =</span> </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">list</span>(<span class="fu">everything</span>() <span class="sc">~</span> <span class="fu">continuous_summary_fns</span>(<span class="fu">c</span>(<span class="st">"N"</span>, <span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"median"</span>, <span class="st">"min"</span>, <span class="st">"max"</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="statistics-comparison" class="level3">
@@ -371,8 +370,152 @@ Alanine Aminotransferase Measurement
 <span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">group3_level =</span> purrr<span class="sc">::</span><span class="fu">map_chr</span>(group3_level, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.character</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(stat, <span class="sc">~</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(.x) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]]), <span class="cn">NA_character_</span>)),</span>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">stat =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(stat, <span class="st">`</span><span class="at">NaN</span><span class="st">`</span> <span class="ot">=</span> <span class="cn">NA_real_</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ard_result, <span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output-display">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 14%">
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">group1</th>
+<th style="text-align: left;">group1_level</th>
+<th style="text-align: left;">group2</th>
+<th style="text-align: left;">group2_level</th>
+<th style="text-align: left;">group3</th>
+<th style="text-align: left;">group3_level</th>
+<th style="text-align: left;">variable</th>
+<th style="text-align: left;">stat_name</th>
+<th style="text-align: right;">stat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: right;">15.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">15.745666</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: right;">7.381973</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">median</td>
+<td style="text-align: right;">15.466383</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">min</td>
+<td style="text-align: right;">3.292476</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">AVAL</td>
+<td style="text-align: left;">max</td>
+<td style="text-align: right;">29.000254</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">CHG</td>
+<td style="text-align: left;">N</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">CHG</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">CHG</td>
+<td style="text-align: left;">sd</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ACTARM</td>
+<td style="text-align: left;">A: Drug X</td>
+<td style="text-align: left;">PARAMCD</td>
+<td style="text-align: left;">ALT</td>
+<td style="text-align: left;">AVISIT</td>
+<td style="text-align: left;">SCREENING</td>
+<td style="text-align: left;">CHG</td>
+<td style="text-align: left;">median</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 </section>
@@ -380,15 +523,10 @@ Alanine Aminotransferase Measurement
 <h4 class="anchored" data-anchor-id="c.-compare-programmatically">C. Compare programmatically</h4>
 <p>Use the diffdf package to compare the results.</p>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(diffdf)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(ard_result, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>       rtables_result,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"group2"</span>, <span class="st">"group2_level"</span>, <span class="st">"group3"</span>, <span class="st">"group3_level"</span>, <span class="st">"variable"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>),</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(ard_result, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>       rtables_result,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"group2"</span>, <span class="st">"group2_level"</span>, <span class="st">"group3"</span>, <span class="st">"group3_level"</span>, <span class="st">"variable"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>),</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
@@ -396,13 +534,10 @@ Alanine Aminotransferase Measurement
 <section id="compare-the-overall_arm" class="level5">
 <h5 class="anchored" data-anchor-id="compare-the-overall_arm">Compare the overall_arm</h5>
 <div class="cell">
-<details class="code-fold">
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(ard_overall, </span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(ard_overall, </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>       rtables_result_overall, </span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1"</span>, <span class="st">"group1_level"</span>, <span class="st">"group2"</span>, <span class="st">"group2_level"</span>, <span class="st">"group3"</span>, <span class="st">"group3_level"</span>, <span class="st">"variable"</span>, <span class="st">"stat_name"</span>, <span class="st">"stat"</span>),</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>

@@ -47,7 +47,6 @@ Note: If your table does not have an "overall" column, you can use the ARD creat
 #| message: false
 
 library(cards)
-library(dplyr)
 
 # data pre-processing
 adae <- syn_data$adae
@@ -164,8 +163,7 @@ tot_pat_ae_rtables <- rtables_result %>%
   filter(variable_label == "Total number of patients with at least one adverse event" & variable == "USUBJID") |>
   dplyr::select("ARM", "stat")
 
-library(diffdf)
-diffdf(tot_pat_ae, tot_pat_ae_rtables, keys = c("ARM", "stat"))
+diffdf::diffdf(tot_pat_ae, tot_pat_ae_rtables, keys = c("ARM", "stat"))
 ```
 #### Total number of adverse events
 ```{r}
@@ -180,7 +178,7 @@ tot_ae_rtables <- rtables_result %>%
   filter(variable == "USUBJID" & variable_label == "Overall total number of events")|>
   dplyr::select("ARM", "stat")
 
-diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
+diffdf::diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
 ```
 
 
@@ -201,7 +199,7 @@ tot_pat_ae_aebod_rtables <- rtables_result %>%
   dplyr::select(c("ARM", "variable", "stat", "group1_level")) |>
   dplyr::rename(variable_level = group1_level)
 
-diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "variable_level", "stat"))
+diffdf::diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "variable_level", "stat"))
 ```
 
 #### Total number of AEs for each AEBODSYS
@@ -216,7 +214,7 @@ tot_ae_aebod_rtables <- rtables_result %>%
     dplyr::rename(label = group1_level) |>
   dplyr::select(c("ARM", "label", "stat"))
 
-diffdf(tot_ae_aebod, tot_ae_aebod_rtables, keys = c("ARM", "label", "stat"))
+diffdf::diffdf(tot_ae_aebod, tot_ae_aebod_rtables, keys = c("ARM", "label", "stat"))
 ```
 
 #### Count and Percent for each AEDECOD within each AEBODSYS
@@ -232,7 +230,7 @@ ae_n_p_aedecod_rtables <- rtables_result %>%
     dplyr::rename(label = variable_label) |>
   dplyr::select(c("ARM", "label", "stat"))
 
-diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", "stat"))
+diffdf::diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", "stat"))
 ```
 
 ### ARD creation with no overall column
@@ -242,7 +240,6 @@ diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", "stat"))
 #| code-fold: false
 #| message: false
 library(cards)
-library(dplyr)
 
 # some data pre-processing
 adae <- syn_data$adae
@@ -313,4 +310,3 @@ ae_n_p_aedecod <- ard_stack_hierarchical(
   dplyr::mutate(
     stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
 ```
-

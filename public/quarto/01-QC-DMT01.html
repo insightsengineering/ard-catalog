@@ -698,40 +698,20 @@ Levels: A: Drug X B: Placebo C: Combination</code></pre>
 <h4 class="anchored" data-anchor-id="c.-compare-programmatically">C. Compare programmatically</h4>
 <p>Here we propose using the {diffdf} package to compare the statistics produced by the two table engines. {diffdf} is designed to compare two data.frames and report any differences/inconsistencies to the user.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(diffdf)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">diffdf</span>(rtables_result, ard_result, <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>), <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>diffdf<span class="sc">::</span><span class="fu">diffdf</span>(rtables_result, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>               ard_result, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">keys =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>), </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">suppress_warnings =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>No issues were found!</code></pre>
 </div>
 </div>
 <p>The <code>anti_join()</code> function from the {dplyr} package can be used to isolate the differences between the two data.frames for closer analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>differences <span class="ot">&lt;-</span> ard_result <span class="sc">%&gt;%</span> <span class="co">#start with the data.frames which contain greater number of rows.</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">anti_join</span>(rtables_result, </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Compare based on key columns</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>)) </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>differences</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="kable-table">
-<table class="caption-top">
-<thead>
-<tr class="header">
-<th style="text-align: left;">group1</th>
-<th style="text-align: left;">group1_level</th>
-<th style="text-align: left;">variable</th>
-<th style="text-align: left;">variable_level</th>
-<th style="text-align: left;">stat_name</th>
-<th style="text-align: right;">stat</th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
-</div>
-</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>differences <span class="ot">&lt;-</span> ard_result <span class="sc">%&gt;%</span> <span class="co">#start with the data.frames which contain greater number of rows.</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">anti_join</span>(rtables_result, </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                   <span class="co"># Compare based on key columns</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"group1_level"</span>,<span class="st">"group1"</span>, <span class="st">"variable"</span>, <span class="st">"variable_level"</span>, <span class="st">"stat_name"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
