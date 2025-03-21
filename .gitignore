@@ -3,5 +3,6 @@
 .RData
 .Ruserdata
 
-.quarto/
-public/
+/.quarto/
+/public/
+
