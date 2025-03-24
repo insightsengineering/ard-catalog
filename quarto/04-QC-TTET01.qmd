@@ -167,8 +167,8 @@ ard_event_rates <- ard_event_rates |>
    mutate(
     variable = recode(variable, "is_event" = "IS_EVENT"),
     variable = ifelse(variable_level == FALSE & variable != "EVNTDESC", "IS_NOT_EVENT", variable),
-                group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-                 stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA))
+                group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+                 stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_))
                 ) |>
   dplyr::select(c("group1", "group1_level", "variable", "stat_name", "stat"))
 
@@ -209,9 +209,9 @@ rtables_tte <- rtables_results |>
 
 # {cards}
 ard_tte <- ard_tte |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
-         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
          stat_name = if_else(variable_level %in% c("0.25", "0.75") & stat_name == "estimate", variable_level, stat_name)) |>
   dplyr::select(c("group1", "group1_level", "stat_name", "stat"))
 
@@ -256,9 +256,9 @@ rtables_pval <- rtables_results |>
 
 # {cards}/{cardx}
 ard_unstrat_coxph <- ard_unstrat_coxph |>
-  mutate(variable = purrr::map_chr(variable, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
-         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA))
+  mutate(variable = purrr::map_chr(variable, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_))
                 ) |>
   dplyr::select(c("variable", "variable_level", "stat_name", "stat"))
 attr(ard_unstrat_coxph$variable_level, "names") <- NULL
@@ -268,7 +268,7 @@ attr(ard_unstrat_coxph$stat, "names") <- NULL
 ard_pval <- ard_pval |>
   tibble::rownames_to_column() |>
   select(c("rowname", "stat")) |>
-   mutate(stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
+   mutate(stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
 ard_pval$rowname <-  sub('.*vs\\.\\s*', "", ard_pval$rowname) 
 ard_pval$rowname <-  sub("^'(.*)'$", "\\1", ard_pval$rowname) 
 
@@ -314,8 +314,8 @@ rtables_surv_time <- rtables_results |>
 # {cards}/{cardx}
 ard_surv_time <- ard_surv_time |>
   select("group1_level", "stat_name", "stat") |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     stat = case_when(
       stat_name == "estimate" ~ stat * 100,   
       stat_name == "conf.low" ~ stat * 100,   
@@ -360,8 +360,8 @@ rtables_surv_diff <- rtables_results |>
 # {cards}/{cardx}
 ard_surv_time_diff <- ard_surv_time_diff |>
   select("group1_level", "stat_name", "stat") |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     stat = case_when(
       stat_name == "estimate" ~ stat * 100,   
       stat_name == "conf.low" ~ stat * 100,   

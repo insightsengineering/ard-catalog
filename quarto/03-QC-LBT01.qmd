@@ -128,10 +128,10 @@ We'll also need some format adjustments for the ARD object. Primarily, convertin
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
   dplyr::mutate(
-  group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+  group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
   stat = dplyr::recode(stat, `NaN` = NA_real_))
 
 # to the overall ard_result, rename the cols to match the rtables df
@@ -143,10 +143,10 @@ ard_overall <- ard_overall |>
                 group3_level = group2_level) |>
    dplyr::mutate(group1 = "ACTARM",
                  group1_level = "Overall ARM",
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
   stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
-  stat = dplyr::recode(stat, `NaN` = NA)) |>
+  stat = dplyr::recode(stat, `NaN` = NA_real_)) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))
 
 head(ard_result, n=10)
