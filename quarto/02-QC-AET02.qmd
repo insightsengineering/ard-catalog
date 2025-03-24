@@ -12,6 +12,7 @@ format:
 ## Adverse Events (AET02) QC Workflow
 
 ### 1. Generate a table using {chevron}
+
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
@@ -41,6 +42,7 @@ rtables_result[1:6, -c(1:2, 7,8)]
 In the code below, we perform different data pre-processing for the different ARDs we want to create. 
 Then, we generate separate ARDs using the {cards} package for the different sections of the AET02 table and compare them as subsets.
 Note: If your table does not have an "overall" column, you can use the ARD creation steps at the bottom of the page using primarily `ard_categorical()`. `ard_hierarchical()` is useful here to calculate the statistics for the overall column and allows for better filtering using the "context" column.
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -136,12 +138,11 @@ ae_n_p_aedecod <- ard_stack_hierarchical(
     stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 ```
 
-
 ### 4. Statistics Comparison
 
 We'll modify the rtables result to closely match the ARD result:
 
-  1. Rename "group2_level" to ARM
+  1. Rename "group2_level" to "ARM" to match the ARD.
   2. Remove any columns that aren't in the ARD result (stat_name is being removed as it is a blank column)
 
 ```{r}
@@ -156,6 +157,7 @@ head(rtables_result, n=10)
 Because the subsets of AET02 table are already separated in the ARDs, we can subset the {rtables} result equally to create a clean comparison.
 
 #### Total number of patients with at least one adverse event
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -168,6 +170,7 @@ tot_pat_ae_rtables <- rtables_result |>
 diffdf::diffdf(tot_pat_ae, tot_pat_ae_rtables, keys = c("ARM", "stat"))
 ```
 #### Total number of adverse events
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -185,6 +188,7 @@ diffdf::diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
 
 
 #### Total number of patients with at least one adverse event within each AEBODSYS
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -205,6 +209,7 @@ diffdf::diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "vari
 ```
 
 #### Total number of AEs for each AEBODSYS
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -220,6 +225,7 @@ diffdf::diffdf(tot_ae_aebod, tot_ae_aebod_rtables, keys = c("ARM", "label", "sta
 ```
 
 #### Count and Percent for each AEDECOD within each AEBODSYS
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false

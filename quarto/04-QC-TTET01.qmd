@@ -146,6 +146,7 @@ For {rtables}:
 For ARD:
 1. recode variable to match {rtables}
 2. convert lists to character or numeric values
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -188,6 +189,7 @@ For {rtables}:
 
 For ARD:
 1. convert lists to character or numeric values
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -232,6 +234,7 @@ For ARD:
 1. recode variable to match {rtables}
 2. convert lists to character or numeric values
 3. set attributes to `NULL`
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -295,6 +298,7 @@ For ARD:
 1. recode variable to match {rtables}
 2. convert lists to character or numeric values
 3. format proportions to scale of 100
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -325,6 +329,7 @@ diffdf::diffdf(
   keys = c("group1_level", "stat_name", "stat"), 
   suppress_warnings = TRUE)
 ```
+
 #### Survival Diff
 
 For {rtables}:
@@ -339,6 +344,7 @@ For ARD:
 3. format proportions to scale of 100
 
 The numeric values of the results are identical but differing directions (due to the A vs. B and B vs. A type differences in the calculations).
+
 ```{r}
 #| code-summary: "Show the code"
 #| code-fold: false
