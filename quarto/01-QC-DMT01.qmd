@@ -106,9 +106,9 @@ We will pull the first string from the lis (`group1_level`, `variable_level`). W
 ```{r}
 ard_result <- ard_result |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
     group1 = dplyr::coalesce(group1, "ARM"),
     group1_level = dplyr::coalesce(group1_level, "All Patients"),
     stat_name = dplyr::recode(stat_name, "N_obs" = "N")

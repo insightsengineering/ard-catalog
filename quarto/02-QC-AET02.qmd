@@ -18,7 +18,7 @@ format:
 library(chevron)
 
 tlg_aet02 <- chevron:: aet02_main(syn_data, arm_var = "ARM", lbl_overall = "Overall ARM")
-head(tlg_aet02, n=15) #truncated preview
+head(tlg_aet02, n=15)
 ```
 
 ### 2. Flatten the table into a data.frame
@@ -75,7 +75,7 @@ tot_pat_ae <- ard_stack_hierarchical(
   dplyr::filter(context == "hierarchical") |> ## removing univariate analysis
   shuffle_ard(trim = FALSE) |>
   dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_))) # convert list to numeric
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA))) # convert list to numeric
 
 # Total number of AEs 
 tot_ae <- ard_stack_hierarchical_count(
@@ -87,8 +87,8 @@ tot_ae <- ard_stack_hierarchical_count(
   dplyr::filter(context == "hierarchical_count") |> ## removing univariate analysis
   dplyr::mutate(
     # convert lists to character and numeric
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)), 
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)), 
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 
 # Total number of patients with at least one adverse event within each AEBODSYS
 tot_pat_ae_aebod <- ard_stack_hierarchical(
@@ -102,8 +102,8 @@ tot_pat_ae_aebod <- ard_stack_hierarchical(
   dplyr::filter(context == "hierarchical") |>  ## removing univariate analysis
   dplyr::mutate(
     # convert lists to character and numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)))
 
 # Total number of AEs for each AEBODSYS
 tot_ae_aebod <- ard_stack_hierarchical_count(
@@ -116,8 +116,8 @@ tot_ae_aebod <- ard_stack_hierarchical_count(
   dplyr::filter(context == "hierarchical_count") |> ## removing univariate analysis
   dplyr::mutate(
     # convert lists to character and numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
-    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)))
 
 # Count and Percent for each AEDECOD within each AEBODSYS
 ae_n_p_aedecod <- ard_stack_hierarchical(
@@ -133,7 +133,7 @@ ae_n_p_aedecod <- ard_stack_hierarchical(
                 variable == "AEDECOD") |> 
   dplyr::mutate(
     # convert list numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 ```
 
 
@@ -193,8 +193,8 @@ tot_pat_ae_aebod <- tot_pat_ae_aebod |>
   dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
   dplyr::select(c("ARM", "variable", "variable_level", "stat")) |>
   dplyr::mutate(
-    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
+    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)))
 
 tot_pat_ae_aebod_rtables <- rtables_result |>
    dplyr::filter(variable_level == "unique" & variable_label == "Total number of patients with at least one adverse event" & group1 == "AEBODSYS") |>
@@ -266,7 +266,7 @@ tot_pat_ae <- ard_categorical(
   denominator = adsl,
   statistic = everything() ~ c("n", "p")) |>
   dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 
 # Total number of AEs 
 tot_ae <- ard_categorical(
@@ -276,8 +276,8 @@ tot_ae <- ard_categorical(
   by = ARM,
   statistic = everything() ~ c("n")) |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 
 # Total number of patients with at least one adverse event within each AEBODSYS
 tot_pat_ae_aebod <- ard_categorical(
@@ -287,8 +287,8 @@ tot_pat_ae_aebod <- ard_categorical(
   denominator = adsl,
   statistic = everything() ~ c("n", "p")) |>
   dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)))
 
 # Total number of AEs for each AEBODSYS
 tot_ae_aebod <- ard_categorical(
@@ -298,7 +298,7 @@ tot_ae_aebod <- ard_categorical(
   denominator = adsl,
   statistic = everything() ~ c("n")) |> 
   dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
   
 # Count and Percent for each AEDECOD within each AEBODSYS
 ae_n_p_aedecod <- ard_stack_hierarchical(
@@ -311,5 +311,5 @@ ae_n_p_aedecod <- ard_stack_hierarchical(
   dplyr::filter(context == "hierarchical", 
                 variable == "AEDECOD") |>
   dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)))
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)))
 ```

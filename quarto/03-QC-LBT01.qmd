@@ -19,11 +19,10 @@ Using the `lbt01_main()` function from the {chevron} package to generate a Lab R
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
-library(chevron)
 
 # Create a table using the chevron package 
-tlg_lbt01 <- chevron::lbt01_main(syn_data, lbl_overall = "Overall ARM")
-head(tlg_lbt01, n = 15) #truncated display
+tlg_lbt01 <- chevron::lbt01_main(chevron::syn_data, lbl_overall = "Overall ARM")
+head(tlg_lbt01, n = 15)
 
 ```
 
@@ -47,6 +46,7 @@ If your table is pruning unobserved levels during calculation, the `by` paramete
 To calculate the statistics for the overall column, the code should look similar to the prior calculation with the "ARM" variable removed from the `by` (or `strata`) parameter (indicating the data is not stratified by "ARM").
 
 We'll keep the stats for the overall column in a separate data.frame to generalize this workflow.
+
 ```{r}
 #| code-fold: false
 #| message: false
@@ -74,13 +74,14 @@ ard_overall <- ard_continuous(adlb,
 #### A. {rtables} reformat
 Some reformatting is required to ensure the resulting data.frames are compatible. Most of the reformatting is adjusting the column names to match that of the ARD result.
 
-  1.  rename `group1` and `group1_level`, `ARM` and `ARM` levels accordingly.
-  2.  rename `group2` and `group2_level`, `PARAMCD` and `PARAMCD` levels accordingly.
-  3.  rename `group3` and `group3_level`, `AVISIT` and `AVISIT` levels accordingly.
+  1.  rename `group3` and `group3_level`, to `group1` and `group1_level` (contains "ARM" values).
+  2.  rename `group1` and `group1_level`, to `group2` and `group2_level` (contains "PARAMCD" values).
+  3.  rename `group2` and `group2_level`, to  `group3` and `group3_level` (contains "AVISIT" values).
   4.  recode `stat` `n` value to `N` to match ARD
   5.  Select columns relevant to comparison
 
 We'll also separate the statistics related to the overall ARM to match the `ard_overall` object.
+
 ```{r}
 #| code-fold: false
 #| code-summary: "Show the code"
@@ -108,6 +109,7 @@ rtables_result <- rtables_result |>
   dplyr::filter(group1_level != "Overall ARM")
 ```
 Based on dimensions alone - we can see that tables likely generated similar results
+
 ```{r, eval=TRUE}
 print("rtables Dimensions")
 dim(rtables_result)
@@ -121,14 +123,15 @@ We'll also need some format adjustments for the ARD object. Primarily, convertin
 1.  Select columns relevant to comparison
 2.  Convert any list columns to character and numeric
 3.  Convert any `NaN` stats to `NA` to match {rtables}
+
 ```{r}
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
   dplyr::mutate(
-  group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
+  group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
   stat = dplyr::recode(stat, `NaN` = NA_real_))
 
 # to the overall ard_result, rename the cols to match the rtables df
@@ -140,10 +143,10 @@ ard_overall <- ard_overall |>
                 group3_level = group2_level) |>
    dplyr::mutate(group1 = "ACTARM",
                  group1_level = "Overall ARM",
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_character_)),
-  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_character_)),
-  stat = dplyr::recode(stat, `NaN` = NA_real_)) |>
+  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+  stat = dplyr::recode(stat, `NaN` = NA)) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))
 
 head(ard_result, n=10)
@@ -151,6 +154,7 @@ head(ard_result, n=10)
 
 #### C. Compare programmatically
 Use the diffdf package to compare the results.
+
 ```{r, eval=TRUE}
 #| code-summary: "Show the code"
 #| code-fold: false
@@ -162,6 +166,7 @@ diffdf::diffdf(ard_result,
 
 
 ##### Compare the overall_arm
+
 ```{r, eval=TRUE}
 #| code-summary: "Show the code"
 #| code-fold: false
