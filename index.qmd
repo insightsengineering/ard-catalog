@@ -5,7 +5,6 @@ editor:
   markdown: 
     wrap: 72
 ---
-
 # Overview
 
 The current procedure for generating clinical reporting tables employs
