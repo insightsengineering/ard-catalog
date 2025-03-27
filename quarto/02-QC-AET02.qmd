@@ -54,86 +54,27 @@ adae <- chevron::syn_data$adae |>
 adsl <- chevron::syn_data$adsl |>
   dplyr::filter(ANL01FL == "Y")
 
-# Keep only 1 record per patient
-adae_one_sub <- adae |> 
-  dplyr::filter(!duplicated(adae[c("USUBJID")]))
-
-# Keep only 1 record per patient for each AEBODSYS
-adae_one_sub_aebod <- adae |> 
-  dplyr::filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
-
 # ----- ARDS -----
-# Total number of patients with at least one adverse event  
-tot_pat_ae <- ard_stack_hierarchical(
-  data = adae_one_sub,
-  id = "USUBJID",
-  variables = c(SAFFL),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p"),
-  overall = TRUE) |>
-  dplyr::filter(context == "hierarchical") |> ## removing univariate analysis
-  shuffle_ard(trim = FALSE) |>
-  dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_))) # convert list to numeric
-
-# Total number of AEs 
-tot_ae <- ard_stack_hierarchical_count(
+ard_result <- ard_stack_hierarchical(
   data = adae,
-  variables = c(SAFFL),
-  denominator = adsl,
-  by = ARM,
-  overall = TRUE) |>
-  dplyr::filter(context == "hierarchical_count") |> ## removing univariate analysis
-  dplyr::mutate(
-    # convert lists to character and numeric
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)), 
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
-
-# Total number of patients with at least one adverse event within each AEBODSYS
-tot_pat_ae_aebod <- ard_stack_hierarchical(
-  id = "USUBJID",
-  data = adae_one_sub_aebod,
-  variables = c(AEBODSYS),
+  variables = c(ANL01FL, AEBODSYS, AEDECOD),
   by = c(ARM),
+  denominator = adsl,
   overall = TRUE,
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p")) |>
-  dplyr::filter(context == "hierarchical") |>  ## removing univariate analysis
-  dplyr::mutate(
-    # convert lists to character and numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)))
+  id = USUBJID,
+  statistic = ~ c("n", "p")
+) |>
+  dplyr::filter(context == "hierarchical")
 
-# Total number of AEs for each AEBODSYS
-tot_ae_aebod <- ard_stack_hierarchical_count(
+ard_count_result <-
+  ard_stack_hierarchical_count(
   data = adae,
-  variables = c(AEBODSYS),
-  by = c(ARM),
-  denominator = adsl,
-  overall = TRUE) |> 
-  shuffle_ard(trim = FALSE) |>
-  dplyr::filter(context == "hierarchical_count") |> ## removing univariate analysis
-  dplyr::mutate(
-    # convert lists to character and numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)))
+  variables = c(ANL01FL, AEBODSYS),
+  by = ARM,
+  overall = TRUE,
+  denominator = ADSL)|>
+  dplyr::filter(context == "hierarchical_count")
 
-# Count and Percent for each AEDECOD within each AEBODSYS
-ae_n_p_aedecod <- ard_stack_hierarchical(
-  data = adae,
-  id = "USUBJID",
-  variables = c(AEBODSYS, AEDECOD),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p"),
-  overall = TRUE) |> 
-  shuffle_ard(trim = FALSE) |> 
-  dplyr::filter(context == "hierarchical", 
-                variable == "AEDECOD") |> 
-  dplyr::mutate(
-    # convert list numeric
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
 ```
 
 ### 4. Statistics Comparison
@@ -145,175 +86,100 @@ We'll modify the rtables result to closely match the ARD result:
 
 ```{r}
 rtables_result <- rtables_result |>
-  dplyr::rename(ARM = group2_level)|>
-  dplyr::select(-c("stat_name", "group2"))
+  dplyr::rename(group1_level = group2_level,
+                group1 = group2,
+                group2 = group1,
+                group2_level = group1_level)
 
 head(rtables_result, n=10)
 ```
 
-
-Because the subsets of AET02 table are already separated in the ARDs, we can subset the {rtables} result equally to create a clean comparison.
-
-#### Total number of patients with at least one adverse event
-
+We can compare the data in subsets to minimize reformatting steps
 ```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-tot_pat_ae <- tot_pat_ae |> dplyr::select(c("ARM", "stat"))
 
-tot_pat_ae_rtables <- rtables_result |>
-  dplyr::filter(variable_label == "Total number of patients with at least one adverse event" & variable == "USUBJID") |>
-  dplyr::select("ARM", "stat")
-
-diffdf::diffdf(tot_pat_ae, tot_pat_ae_rtables, keys = c("ARM", "stat"))
-```
-#### Total number of adverse events
-
-```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-tot_ae <- tot_ae |>   
-  dplyr::rename(ARM = group1_level) |>
-  dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
-  dplyr::select(c("ARM", "stat"))
-
-tot_ae_rtables <- rtables_result |>
-  dplyr::filter(variable == "USUBJID" & variable_label == "Overall total number of events")|>
-  dplyr::select("ARM", "stat")
-
-diffdf::diffdf(tot_ae, tot_ae_rtables, keys = c("ARM", "stat"))
-```
-
-
-#### Total number of patients with at least one adverse event within each AEBODSYS
-
-```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-tot_pat_ae_aebod <- tot_pat_ae_aebod |>
-  dplyr::rename(ARM = group1_level) |>
-  dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM))|>
-  dplyr::select(c("ARM", "variable", "variable_level", "stat")) |>
-  dplyr::mutate(
-    ARM = purrr::map_chr(ARM, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)))
-
-tot_pat_ae_aebod_rtables <- rtables_result |>
-   dplyr::filter(variable_level == "unique" & variable_label == "Total number of patients with at least one adverse event" & group1 == "AEBODSYS") |>
-  dplyr::select(c("ARM", "variable", "stat", "group1_level")) |>
-  dplyr::rename(variable_level = group1_level)
-
-diffdf::diffdf(tot_pat_ae_aebod, tot_pat_ae_aebod_rtables, keys = c("ARM", "variable_level", "stat"))
-```
-
-#### Total number of AEs for each AEBODSYS
-
-```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-tot_ae_aebod <- tot_ae_aebod |>
-  dplyr::select(c("ARM", "label", "stat"))
-
-tot_ae_aebod_rtables <- rtables_result |>
-  dplyr::filter(variable_label == "Total number of events") |>
-    dplyr::rename(label = group1_level) |>
-  dplyr::select(c("ARM", "label", "stat"))
-
-diffdf::diffdf(tot_ae_aebod, tot_ae_aebod_rtables, keys = c("ARM", "label", "stat"))
-```
-
-#### Count and Percent for each AEDECOD within each AEBODSYS
-
-```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-ae_n_p_aedecod <- ae_n_p_aedecod |>
-  dplyr::mutate(ARM = ifelse(is.na(ARM), "Overall ARM", ARM)) |>
-  dplyr::select(c("ARM", "label", "stat"))
-
-ae_n_p_aedecod_rtables <- rtables_result |>
+# subgroup analysis
+rtables_result_sub1 <- rtables_result |>
   dplyr::filter(variable == "AEDECOD") |>
-    dplyr::rename(label = variable_label) |>
-  dplyr::select(c("ARM", "label", "stat"))
+  dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
 
-diffdf::diffdf(ae_n_p_aedecod, ae_n_p_aedecod_rtables, keys = c("ARM", "label", "stat"))
+ard_sub1 <- ard_result |>
+  dplyr::filter(variable == "AEDECOD") |>
+  dplyr::mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+    group1 = dplyr::case_when(
+      group1 == "ANL01FL" ~ "ARM",
+      TRUE ~ group1),
+    group1_level = dplyr::case_when(
+      group1_level == "Y" ~ "Overall ARM",
+      TRUE ~ group1_level)) |>
+   dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
+   
+
+diffdf::diffdf(rtables_result_sub1, ard_sub1, keys = c("group1", "group1_level", "variable", "variable_level", "stat"))
 ```
 
-### ARD creation with no overall column
+Compare the second subset
 
 ```{r}
-#| code-summary: "Show the code"
-#| code-fold: false
-#| message: false
-library(cards)
-
-# data pre-processing. filter observations with ANL01FL = "Y"
-adae <- chevron::syn_data$adae |>
-  dplyr::filter(ANL01FL == "Y")
-adsl <- chevron::syn_data$adsl |>
-  dplyr::filter(ANL01FL == "Y")
-
-# Keep only 1 record per patient
-adae_one_sub <- adae |> 
-  dplyr::filter(!duplicated(adae[c("USUBJID")]))
-
-# Keep only 1 record per patient for each AEBODSYS
-adae_one_sub_aebod <- adae |> 
-  dplyr::filter(!duplicated(adae[c("USUBJID", "AEBODSYS")]))
-
-# ----- ARDS -----
-# Total number of patients with at least one adverse event  ## removing univariate analysis
-tot_pat_ae <- ard_categorical(
-  data = adae_one_sub,
-  variables = c(SAFFL),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p")) |>
-  dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
-
-# Total number of AEs 
-tot_ae <- ard_categorical(
-  data = adae,
-  variables = c(SAFFL),
-  denominator = adsl,
-  by = ARM,
-  statistic = everything() ~ c("n")) |>
-  dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
-
-# Total number of patients with at least one adverse event within each AEBODSYS
-tot_pat_ae_aebod <- ard_categorical(
-  data = adae_one_sub_aebod,
-  variables = c(AEBODSYS),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p")) |>
-  dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)))
-
-# Total number of AEs for each AEBODSYS
-tot_ae_aebod <- ard_categorical(
-  data = adae,
-  variables = c(AEBODSYS),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n")) |> 
-  dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
+rtables_result_sub2 <- rtables_result |>
+  dplyr::filter(variable %in% c("USUBJID", "AEBODSYS") & variable_level != "nonunique")|>
+  dplyr::select(c("group1", "group1_level", "group2", "group2_level", "stat")) |>
+   dplyr::rename(variable = group2,
+                variable_level = group2_level) |>
+  dplyr::mutate(variable = dplyr::coalesce(variable, "ANL01FL"),
+                variable_level = dplyr::coalesce(variable_level, "Y"))
   
-# Count and Percent for each AEDECOD within each AEBODSYS
-ae_n_p_aedecod <- ard_stack_hierarchical(
-  data = adae,
-  id = "USUBJID",
-  variables = c(AEBODSYS, AEDECOD),
-  by = c(ARM),
-  denominator = adsl,
-  statistic = everything() ~ c("n", "p")) |> 
-  dplyr::filter(context == "hierarchical", 
-                variable == "AEDECOD") |>
-  dplyr::mutate(
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
+
+ard_sub2 <- ard_result |>
+  dplyr::filter(variable %in% c("ANL01FL", "AEBODSYS")) |>
+   dplyr::mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+     group1 = dplyr::recode(group1, "ANL01FL" = "ARM"),
+    group1_level = dplyr::recode(group1_level, "Y" = "Overall ARM"),
+    group1 = dplyr::coalesce(group1, "ARM"),
+    group1_level = dplyr::coalesce(group1_level, "Overall ARM"))|>
+  dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
+   
+diffdf::diffdf(rtables_result_sub2, ard_sub2, keys = c("group1", "group1_level", "variable", "variable_level", "stat"))
+```
+
+Total Number of Events (ARD counts data.frame)
+
+```{r}
+
+# reformat rtables
+rtables_count <- rtables_result |>
+  dplyr::filter(variable_label %in% c("Total number of events", "Overall total number of events")) |>
+  dplyr::mutate(group2 = dplyr::case_when(
+    variable_label == "Overall total number of events" ~ "ANL01FL",
+    TRUE ~ group2 ),
+  group2_level = dplyr::case_when(
+      variable_label == "Overall total number of events" ~ "Y",
+      TRUE ~ group2_level 
+    )) |>
+  dplyr::select("group1", "group1_level", "group2", "group2_level", "stat")
+
+# reformat ARD result
+ard_count_result <- ard_count_result |>
+   dplyr::mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+    group1 = dplyr::coalesce(group1, "ARM"),
+    group1_level = dplyr::coalesce(group1_level, "Overall ARM"),
+    group1 = dplyr::case_when(
+      group1 == "ANL01FL" ~ "ARM",
+      TRUE ~ group1),
+    group1_level = dplyr::case_when(
+      group1_level == "Y" ~ "Overall ARM",
+      TRUE ~ group1_level))|>
+  dplyr::select("group1", "group1_level", "variable", "variable_level", "stat") |>
+  dplyr::rename(group2 = variable,
+                group2_level = variable_level)
+
+diffdf::diffdf(rtables_count, ard_count_result, keys = c("group1", "group1_level", "group2", "group2_level", "stat"))
 ```
