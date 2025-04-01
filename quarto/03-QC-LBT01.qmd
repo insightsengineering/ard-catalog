@@ -40,10 +40,10 @@ rtables_result <- rtables::as_result_df(tlg_lbt01, make_ard = TRUE, add_tbl_str_
 ### 3. Create a comparable ARD
 
 Using the `ard_continuous` function, we will compute the lab results statistics. 
-Notice how there are multiple variables specified by `by`: observations will be grouped in that sequence before calculating the statistics for the variables listed in `variables`. 
-If your table is pruning unobserved levels during calculation, the `by` parameter should be replaced with the `strata` parameter (more detail described in the documentation [here](https://insightsengineering.github.io/cards/latest-tag/reference/ard_continuous.html#arg-by-strata)).
+Notice how there are multiple variables specified by `strata`: observations will be grouped in that sequence before calculating the statistics for the variables listed in `variables`. 
+The `strata` parameter calculates statistics for observed levels only. If your table keeps unobserved levels during calculation, the `strata` parameter should be replaced with the `by` parameter (more detail described in the documentation [here](https://insightsengineering.github.io/cards/latest-tag/reference/ard_continuous.html#arg-by-strata)).
 
-To calculate the statistics for the overall column, the code should look similar to the prior calculation with the "ARM" variable removed from the `by` (or `strata`) parameter (indicating the data is not stratified by "ARM").
+To calculate the statistics for the overall column, the code should look similar to the prior calculation with the "ARM" variable removed from the `strata` (or `by`) parameter (indicating the data is not stratified by "ARM").
 
 We'll keep the stats for the overall column in a separate data.frame to generalize this workflow.
 
@@ -56,14 +56,14 @@ library(cards)
 adlb <- chevron::syn_data$adlb
 
 ard_result <- ard_continuous(adlb, 
-                             by = c(ACTARM, PARAMCD, AVISIT), 
+                             strata = c(ACTARM, PARAMCD, AVISIT), 
                              variables = c(AVAL, CHG), 
                              statistic = 
                                list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
 
 # calculate overall statistics
 ard_overall <- ard_continuous(adlb, 
-                             by = c(PARAMCD, AVISIT), # note arm var is removed
+                             strata = c(PARAMCD, AVISIT), # note arm var is removed
                              variables = c(AVAL, CHG), 
                              statistic = 
                                list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
