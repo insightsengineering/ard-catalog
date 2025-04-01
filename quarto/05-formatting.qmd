@@ -1,0 +1,57 @@
+ ---
+title: "Formatting Statistics"
+editor: source
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: scroll 
+    df-print: kable
+---
+
+When running the QC workflow with ARDs, there may be discrepancies due to rounding methodologies. 
+
+The {rtables} package uses R's default "round-to-even" rounding (IEC 60559), while the {cards} package uses the standard rounding scheme (round-half-up: where values exactly halfway between two numbers are rounded up). If you are comparing rounded numbers in your analysis, we recommend applying a formatting function to your ARD statistics to match the {rtables} rounding scheme.
+
+
+Make note of the median, and range values in the {rtables} result.
+```{r}
+result <- rtables::basic_table(show_colcounts = TRUE) %>%
+  rtables::split_cols_by(var = "ARM") %>%
+  tern::analyze_vars(
+    vars = "BMIBL",
+     .formats = c("mean_sd" = "xx. / xx.", "median" = "xx.", "range" = "(xx., xx.)")) %>% # rounding stats to whole numbers
+  rtables::build_table(ADSL)
+
+result_df <- rtables::as_result_df(result, make_ard = T)
+```
+
+```{r}
+library(cards)
+
+ard_formatting <- ard_continuous(ADSL, by = TRT01A, variables = "BMIBL",
+                     fmt_fn = list(
+        BMIBL = list(
+          N = "xx",
+          mean = "xx",
+          sd = "xx",
+          median = "xx",
+          min = "xx",
+          max = "xx"
+        )
+      )) |>
+  apply_fmt_fn() |>
+  dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
+
+ard_formatting <- ard_formatting |>
+  dplyr::mutate(rtables_rounding = round5(unlist(stat))) # rounding the stats using the `round5` function
+
+```
+
+Compare the {rtables} formatted string and the {cards} formatted string
+```{r}
+compare_df <- cbind(ard_formatting[,c("variable", "stat_name", "stat", "stat_fmt")], result_df[,"stat_string"])
+compare_df
+```
+

@@ -39,6 +39,8 @@ website:
       text: Lab Results Table
     - href: quarto/04-QC-TTET01.qmd
       text: Time-to-Event Table
+    - href: quarto/05-formatting.qmd
+      text: Formatting Statistics
 
 format:
   html:
