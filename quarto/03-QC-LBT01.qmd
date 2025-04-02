@@ -20,10 +20,9 @@ Using the `lbt01_main()` function from the {chevron} package to generate a Lab R
 #| message: false
 #| code-summary: "Show the code"
 
-# Create a table using the chevron package 
+# Create a table using the chevron package
 tlg_lbt01 <- chevron::lbt01_main(chevron::syn_data, lbl_overall = "Overall ARM")
 head(tlg_lbt01, n = 15)
-
 ```
 
 ### 2. Flatten the table into a data.frame
@@ -55,18 +54,20 @@ library(cards)
 
 adlb <- chevron::syn_data$adlb
 
-ard_result <- ard_continuous(adlb, 
-                             strata = c(ACTARM, PARAMCD, AVISIT), 
-                             variables = c(AVAL, CHG), 
-                             statistic = 
-                               list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
+ard_result <- ard_continuous(adlb,
+  strata = c(ACTARM, PARAMCD, AVISIT),
+  variables = c(AVAL, CHG),
+  statistic =
+    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
+)
 
 # calculate overall statistics
-ard_overall <- ard_continuous(adlb, 
-                             strata = c(PARAMCD, AVISIT), # note arm var is removed
-                             variables = c(AVAL, CHG), 
-                             statistic = 
-                               list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))))
+ard_overall <- ard_continuous(adlb,
+  strata = c(PARAMCD, AVISIT), # note arm var is removed
+  variables = c(AVAL, CHG),
+  statistic =
+    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
+)
 ```
 
 ### 4.Statistics comparison
@@ -86,19 +87,24 @@ We'll also separate the statistics related to the overall ARM to match the `ard_
 #| code-fold: false
 #| code-summary: "Show the code"
 rtables_result <- rtables_result |>
-  dplyr::mutate(stat_name = dplyr::recode(stat_name, "n" = "N"),
-                group4_level = dplyr::recode(group4_level, 
-                                             "Analysis Value" = "AVAL",
-                                             "Absolute Change from Baseline" = "CHG")) |>
-  dplyr::rename(group1 = group3,
-                group1_level = group3_level,
-                group2 = group1,
-                group2_level = group1_level,
-                group3 = group2,
-                group3_level = group2_level,
-                variable = group4_level,
-                # giving a dummy name for this column so it doesn't interfere with the column renaming
-                val = variable) |>
+  dplyr::mutate(
+    stat_name = dplyr::recode(stat_name, "n" = "N"),
+    group4_level = dplyr::recode(group4_level,
+      "Analysis Value" = "AVAL",
+      "Absolute Change from Baseline" = "CHG"
+    )
+  ) |>
+  dplyr::rename(
+    group1 = group3,
+    group1_level = group3_level,
+    group2 = group1,
+    group2_level = group1_level,
+    group3 = group2,
+    group3_level = group2_level,
+    variable = group4_level,
+    # giving a dummy name for this column so it doesn't interfere with the column renaming
+    val = variable
+  ) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))
 
 rtables_result_overall <- rtables_result |>
@@ -128,28 +134,33 @@ We'll also need some format adjustments for the ARD object. Primarily, convertin
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
   dplyr::mutate(
-  group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-  stat = dplyr::recode(stat, `NaN` = NA_real_))
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+    stat = dplyr::recode(stat, `NaN` = NA_real_)
+  )
 
 # to the overall ard_result, rename the cols to match the rtables df
 
 ard_overall <- ard_overall |>
-  dplyr::rename(group2 = group1,
-                group2_level = group1_level,
-                group3 = group2,
-                group3_level = group2_level) |>
-   dplyr::mutate(group1 = "ACTARM",
-                 group1_level = "Overall ARM",
-  group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-  group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-  stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
-  stat = dplyr::recode(stat, `NaN` = NA_real_)) |>
+  dplyr::rename(
+    group2 = group1,
+    group2_level = group1_level,
+    group3 = group2,
+    group3_level = group2_level
+  ) |>
+  dplyr::mutate(
+    group1 = "ACTARM",
+    group1_level = "Overall ARM",
+    group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
+    stat = dplyr::recode(stat, `NaN` = NA_real_)
+  ) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))
 
-head(ard_result, n=10)
+head(ard_result, n = 10)
 ```
 
 #### C. Compare programmatically
@@ -158,10 +169,11 @@ Use the diffdf package to compare the results.
 ```{r, eval=TRUE}
 #| code-summary: "Show the code"
 #| code-fold: false
-diffdf::diffdf(ard_result, 
-       rtables_result,
-       keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
-       suppress_warnings = TRUE)
+diffdf::diffdf(ard_result,
+  rtables_result,
+  keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```
 
 
@@ -170,8 +182,9 @@ diffdf::diffdf(ard_result,
 ```{r, eval=TRUE}
 #| code-summary: "Show the code"
 #| code-fold: false
-diffdf::diffdf(ard_overall, 
-       rtables_result_overall, 
-       keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
-       suppress_warnings = TRUE)
+diffdf::diffdf(ard_overall,
+  rtables_result_overall,
+  keys = c("group1", "group1_level", "group2", "group2_level", "group3", "group3_level", "variable", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```

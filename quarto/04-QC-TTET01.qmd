@@ -19,10 +19,10 @@ format:
 #| code-summary: "Show the code"
 library(chevron)
 
-# Create a table using the chevron package 
+# Create a table using the chevron package
 proc_data <- dunlin::log_filter(syn_data, PARAMCD == "PFS", "adtte")
 tlg_ttet01 <- chevron::run(ttet01, proc_data)
-head(tlg_ttet01, n=15)
+head(tlg_ttet01, n = 15)
 ```
 
 ### 2. Flatten the table into a data.frame
@@ -31,7 +31,7 @@ A rtables based output can be flattened into a data frame using the `as_results_
 
 ```{r, warning=FALSE}
 rtables_results <- rtables::as_result_df(tlg_ttet01, make_ard = TRUE, add_tbl_str_decimals = FALSE)
-head(rtables_results, n=5)
+head(rtables_results, n = 5)
 ```
 
 ### 3. Create comparable ARDs
@@ -53,29 +53,33 @@ library(survival)
 
 # Data Pre-processing
 adtte <- proc_data$adtte |>
-  dplyr::mutate(AVAL = (AVAL/ 30.4375), #convert days to months, this is the same calculation chevron uses.
-                is_event = CNSR == 0, # chevron coding of events
-                is_not_event = CNSR == 1)
+  dplyr::mutate(
+    AVAL = (AVAL / 30.4375), # convert days to months, this is the same calculation chevron uses.
+    is_event = CNSR == 0, # chevron coding of events
+    is_not_event = CNSR == 1
+  )
 
 # ----- ARDS -----
 # Calculate Event Rates
 ard_event_rates <- cards::bind_ard(
   # Patient Event Rates
-  ard_categorical(adtte, strata = c(ARM), variable = c(is_event), statistic = everything()~c("n", "p")),
+  ard_categorical(adtte, strata = c(ARM), variable = c(is_event), statistic = everything() ~ c("n", "p")),
   # Earliest Contributing Event
-  ard_categorical(adtte |> dplyr::filter(is_event == TRUE), strata = c(ARM), variable = c(EVNTDESC), statistic = everything()~c("n")))
- 
+  ard_categorical(adtte |> dplyr::filter(is_event == TRUE), strata = c(ARM), variable = c(EVNTDESC), statistic = everything() ~ c("n"))
+)
+
 # Calculate Time to Event
 ard_tte <- cards::bind_ard(
   # calculate median
   survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.type = "plain") |>
-  ard_survival_survfit(probs = 0.5), 
+    ard_survival_survfit(probs = 0.5),
   # calculate quantiles
   survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.type = "plain") |>
-  ard_survival_survfit(probs = c(0.25, 0.75)) |>
-  filter(stat_name == "estimate"),
+    ard_survival_survfit(probs = c(0.25, 0.75)) |>
+    filter(stat_name == "estimate"),
   # calculate range
-  ard_continuous(adtte, by = c(ARM), variable = c(AVAL), statistic = ~ continuous_summary_fns(c("min", "max"))))
+  ard_continuous(adtte, by = c(ARM), variable = c(AVAL), statistic = ~ continuous_summary_fns(c("min", "max")))
+)
 
 # Calculate Unstratified coxph
 # set the reference arm
@@ -84,24 +88,31 @@ ref_arm <- "A: Drug X"
 ard_unstrat_coxph <- ard_pairwise(
   adtte,
   variable = ARM,
-  .f = \(df) {coxph(Surv(AVAL, is_event) ~ ARM, data = df, ties = "efron") |> 
+  .f = \(df) {
+    coxph(Surv(AVAL, is_event) ~ ARM, data = df, ties = "efron") |>
       ard_regression(exponentiate = TRUE) |>
-      dplyr::filter(stat_name %in% c("estimate", "conf.low", "conf.high") & variable_level != ref_arm)},
-  include = ref_arm) |>
+      dplyr::filter(stat_name %in% c("estimate", "conf.low", "conf.high") & variable_level != ref_arm)
+  },
+  include = ref_arm
+) |>
   bind_ard() # Pairwise Analysis generated a list of ARDs
 
 # calculate the pvalue
 ard_pval <- ard_pairwise(
   adtte,
   variable = ARM,
-  .f = \(df) {ard_survival_survdiff(survival::Surv(AVAL, is_event) ~ ARM, data = df) |>
-      dplyr::filter(stat_name %in% "p.value")},
-  include = ref_arm) # Pairwise Analysis generated a list of ARDs
+  .f = \(df) {
+    ard_survival_survdiff(survival::Surv(AVAL, is_event) ~ ARM, data = df) |>
+      dplyr::filter(stat_name %in% "p.value")
+  },
+  include = ref_arm
+) # Pairwise Analysis generated a list of ARDs
 
 ard_pval <- do.call(rbind, ard_pval)
 
 # 6 Months Risk Analysis
-ard_surv_time <- survfit(Surv(AVAL, is_event) ~ ARM, adtte, conf.int = 0.95, conf.type = "plain") |> ard_survival_survfit(time = 6) |>
+ard_surv_time <- survfit(Surv(AVAL, is_event) ~ ARM, adtte, conf.int = 0.95, conf.type = "plain") |>
+  ard_survival_survfit(time = 6) |>
   dplyr::filter(stat_name != "std.error")
 
 # difference in event free rate
@@ -109,7 +120,7 @@ ard_surv_time_diff <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value"))
 
-head(ard_surv_time_diff, n=5)
+head(ard_surv_time_diff, n = 5)
 ```
 
 ### Statistics comparison
@@ -126,13 +137,13 @@ apply_row_transformation <- function(data, condition, values) {
     mutate(
       row_num = row_number(),
       variable_level = case_when(
-        group & row_number() %% 2 == 1 ~ values[1],  # Odd row in condition group
-        group & row_number() %% 2 == 0 ~ values[2],  # Even row in condition group
-        TRUE ~ variable_level  # Keep original value
+        group & row_number() %% 2 == 1 ~ values[1], # Odd row in condition group
+        group & row_number() %% 2 == 0 ~ values[2], # Even row in condition group
+        TRUE ~ variable_level # Keep original value
       )
     ) |>
     ungroup() |>
-    select(-group, -row_num)  # Remove temporary columns
+    select(-group, -row_num) # Remove temporary columns
 }
 ```
 
@@ -151,33 +162,38 @@ For ARD:
 #| code-summary: "Show the code"
 #| code-fold: false
 # {rtables}
-rtables_event_rate <-  rtables_results |>
+rtables_event_rate <- rtables_results |>
   filter(variable_label == "Patients with event (%)" | variable_label == "Patients without event (%)" | group1_level == "Patients with event (%)") |>
-  dplyr::rename(group1 = group2,
-                group1_level = group2_level,
-                # rename other vars to avoid error
-                group2 = group1,
-                group2_level = group1_level) |>
-  dplyr::select(c(group1, group1_level, variable, stat_name, stat))|>
-  dplyr::mutate(stat_name = dplyr::recode(stat_name, "count" = "n"),
-                stat_name = dplyr::recode(stat_name, "fraction" = "p"))
+  dplyr::rename(
+    group1 = group2,
+    group1_level = group2_level,
+    # rename other vars to avoid error
+    group2 = group1,
+    group2_level = group1_level
+  ) |>
+  dplyr::select(c(group1, group1_level, variable, stat_name, stat)) |>
+  dplyr::mutate(
+    stat_name = dplyr::recode(stat_name, "count" = "n"),
+    stat_name = dplyr::recode(stat_name, "fraction" = "p")
+  )
 
 # {cards}
 ard_event_rates <- ard_event_rates |>
-   mutate(
+  mutate(
     variable = recode(variable, "is_event" = "IS_EVENT"),
     variable = ifelse(variable_level == FALSE & variable != "EVNTDESC", "IS_NOT_EVENT", variable),
-                group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-                 stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_))
-                ) |>
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_))
+  ) |>
   dplyr::select(c("group1", "group1_level", "variable", "stat_name", "stat"))
 
 # compare stats
 diffdf::diffdf(
-  rtables_event_rate, 
-  ard_event_rates, 
-  keys = c("group1", "group1_level", "variable", "stat_name", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_event_rate,
+  ard_event_rates,
+  keys = c("group1", "group1_level", "variable", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```
 
 #### Time to Event Table
@@ -196,10 +212,12 @@ For ARD:
 # {rtables}
 rtables_tte <- rtables_results |>
   filter(variable == "time_to_event") |>
-  rename(group1 = group2,
-         group1_level = group2_level,
-         group2 = group1,
-         group2_level = group1_level) |>
+  rename(
+    group1 = group2,
+    group1_level = group2_level,
+    group2 = group1,
+    group2_level = group1_level
+  ) |>
   apply_row_transformation("95% CI", c("conf.low", "conf.high")) |>
   apply_row_transformation("Range", c("min", "max")) |>
   apply_row_transformation("25% and 75%-ile", c("0.25", "0.75")) |>
@@ -209,18 +227,21 @@ rtables_tte <- rtables_results |>
 
 # {cards}
 ard_tte <- ard_tte |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-         stat_name = if_else(variable_level %in% c("0.25", "0.75") & stat_name == "estimate", variable_level, stat_name)) |>
+  mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat_name = if_else(variable_level %in% c("0.25", "0.75") & stat_name == "estimate", variable_level, stat_name)
+  ) |>
   dplyr::select(c("group1", "group1_level", "stat_name", "stat"))
 
 # compare stats
 diffdf::diffdf(
-  rtables_tte, 
-  ard_tte, 
-  keys = c("group1", "group1_level", "stat_name", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_tte,
+  ard_tte,
+  keys = c("group1", "group1_level", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```
 #### Unstratified Pairwise Coxph
 
@@ -240,26 +261,29 @@ For ARD:
 #| code-fold: false
 # {rtables}
 rtables_unstrat_coxph <- rtables_results |>
-  filter(variable == "coxph_unstratified" & !is.na(stat) & variable_level !="pvalue") |>
+  filter(variable == "coxph_unstratified" & !is.na(stat) & variable_level != "pvalue") |>
   select("group2", "group2_level", "variable_level", "stat") |>
   apply_row_transformation("hr_ci", c("conf.low", "conf.high")) |>
-  rename(variable = group2,
-         variable_level = group2_level,
-         stat_name = variable_level) |>
+  rename(
+    variable = group2,
+    variable_level = group2_level,
+    stat_name = variable_level
+  ) |>
   mutate(stat_name = dplyr::recode(stat_name, "hr" = "estimate"))
 
 # logpvalue
 rtables_pval <- rtables_results |>
-  filter(variable_level =="pvalue" & !is.na(stat)) |>
+  filter(variable_level == "pvalue" & !is.na(stat)) |>
   select("group2_level", "stat") |>
-  rename("rowname"="group2_level")
+  rename("rowname" = "group2_level")
 
 # {cards}/{cardx}
 ard_unstrat_coxph <- ard_unstrat_coxph |>
-  mutate(variable = purrr::map_chr(variable, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-         variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_))
-                ) |>
+  mutate(
+    variable = purrr::map_chr(variable, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_))
+  ) |>
   dplyr::select(c("variable", "variable_level", "stat_name", "stat"))
 attr(ard_unstrat_coxph$variable_level, "names") <- NULL
 attr(ard_unstrat_coxph$stat, "names") <- NULL
@@ -268,23 +292,25 @@ attr(ard_unstrat_coxph$stat, "names") <- NULL
 ard_pval <- ard_pval |>
   tibble::rownames_to_column() |>
   select(c("rowname", "stat")) |>
-   mutate(stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
-ard_pval$rowname <-  sub('.*vs\\.\\s*', "", ard_pval$rowname) 
-ard_pval$rowname <-  sub("^'(.*)'$", "\\1", ard_pval$rowname) 
+  mutate(stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)))
+ard_pval$rowname <- sub(".*vs\\.\\s*", "", ard_pval$rowname)
+ard_pval$rowname <- sub("^'(.*)'$", "\\1", ard_pval$rowname)
 
 # Compare stats
 diffdf::diffdf(
-  rtables_unstrat_coxph, 
-  ard_unstrat_coxph, 
-  keys = c("variable", "variable_level", "stat_name", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_unstrat_coxph,
+  ard_unstrat_coxph,
+  keys = c("variable", "variable_level", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 
 # Log pvalue
 diffdf::diffdf(
-  rtables_pval, 
-  ard_pval, 
-  keys = c("rowname", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_pval,
+  ard_pval,
+  keys = c("rowname", "stat"),
+  suppress_warnings = TRUE
+)
 ```
 #### Survival (Timepoint)
 
@@ -307,27 +333,35 @@ rtables_surv_time <- rtables_results |>
   filter(variable == "surv_6") |>
   select(c("group2_level", "variable_level", "stat")) |>
   apply_row_transformation("rate_ci", c("conf.low", "conf.high")) |>
-  rename(group1_level = group2_level,
-         stat_name = variable_level) |>
-  mutate(stat_name = dplyr::recode(stat_name, "pt_at_risk" = "n.risk",
-                                   "event_free_rate"= "estimate"))
+  rename(
+    group1_level = group2_level,
+    stat_name = variable_level
+  ) |>
+  mutate(stat_name = dplyr::recode(stat_name,
+    "pt_at_risk" = "n.risk",
+    "event_free_rate" = "estimate"
+  ))
 # {cards}/{cardx}
 ard_surv_time <- ard_surv_time |>
   select("group1_level", "stat_name", "stat") |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+  mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     stat = case_when(
-      stat_name == "estimate" ~ stat * 100,   
-      stat_name == "conf.low" ~ stat * 100,   
-      stat_name == "conf.high" ~ stat * 100,  
-      TRUE ~ stat))
+      stat_name == "estimate" ~ stat * 100,
+      stat_name == "conf.low" ~ stat * 100,
+      stat_name == "conf.high" ~ stat * 100,
+      TRUE ~ stat
+    )
+  )
 
 # Compare stats
 diffdf::diffdf(
-  rtables_surv_time, 
-  ard_surv_time, 
-  keys = c("group1_level", "stat_name", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_surv_time,
+  ard_surv_time,
+  keys = c("group1_level", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```
 
 #### Survival Diff
@@ -353,25 +387,33 @@ rtables_surv_diff <- rtables_results |>
   filter(variable == "surv_diff_6" & !is.na(stat)) |>
   select(c("group2_level", "variable_level", "stat")) |>
   apply_row_transformation("rate_diff_ci", c("conf.low", "conf.high")) |>
-  rename(group1_level = group2_level,
-         stat_name = variable_level) |>
- mutate(stat_name = dplyr::recode(stat_name, "rate_diff" = "estimate",
-                                   "ztest_pval"= "p.value"))
+  rename(
+    group1_level = group2_level,
+    stat_name = variable_level
+  ) |>
+  mutate(stat_name = dplyr::recode(stat_name,
+    "rate_diff" = "estimate",
+    "ztest_pval" = "p.value"
+  ))
 # {cards}/{cardx}
 ard_surv_time_diff <- ard_surv_time_diff |>
   select("group1_level", "stat_name", "stat") |>
-  mutate(group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-          stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
+  mutate(
+    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
+    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     stat = case_when(
-      stat_name == "estimate" ~ stat * 100,   
-      stat_name == "conf.low" ~ stat * 100,   
-      stat_name == "conf.high" ~ stat * 100,  
-      TRUE ~ stat))
+      stat_name == "estimate" ~ stat * 100,
+      stat_name == "conf.low" ~ stat * 100,
+      stat_name == "conf.high" ~ stat * 100,
+      TRUE ~ stat
+    )
+  )
 
 # compare stats
 diffdf::diffdf(
-  rtables_surv_diff, 
-  ard_surv_time_diff, 
-  keys = c("group1_level", "stat_name", "stat"), 
-  suppress_warnings = TRUE)
+  rtables_surv_diff,
+  ard_surv_time_diff,
+  keys = c("group1_level", "stat_name", "stat"),
+  suppress_warnings = TRUE
+)
 ```

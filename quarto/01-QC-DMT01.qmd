@@ -19,9 +19,9 @@ format:
 #| code-summary: "Show the code"
 library(chevron)
 
-# Create a table using the chevron package 
+# Create a table using the chevron package
 tlg_dmt01 <- chevron::dmt01_main(syn_data, summaryvars = c("AGE", "AGEGR1", "SEX", "ETHNIC", "RACE"))
-head(tlg_dmt01, n=15)
+head(tlg_dmt01, n = 15)
 ```
 
 ### 2. Flatten the table into a data.frame
@@ -50,15 +50,18 @@ Note: when a `by` variable is specified in the  `ard_stack()` call, a univariate
 library(cards)
 
 # build ARDs that calculate relevant statistics for continuous and categorical variables.
-ard_result <- 
+ard_result <-
   ard_stack(
-    syn_data$adsl, 
-    ard_continuous(variables = c(AGE), 
-                   statistic = ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))),
-    ard_categorical(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic =everything() ~ c("n", "p")),
-    ard_missing(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic = everything()~ c("N_obs")),
+    syn_data$adsl,
+    ard_continuous(
+      variables = c(AGE),
+      statistic = ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))
+    ),
+    ard_categorical(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic = everything() ~ c("n", "p")),
+    ard_missing(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic = everything() ~ c("N_obs")),
     .by = "ARM",
-    .overall = TRUE)
+    .overall = TRUE
+  )
 
 ard_result[1:6, -c(1, 9:11)]
 ```
@@ -86,12 +89,12 @@ rtables_result <- rtables_result |>
       variable == "AGE" & variable_level %in% c("mean_sd", "median", "range", "n") ~ NA_character_,
       TRUE ~ variable_level
     ),
-    variable_level = sub("^[^.]*\\.", "", variable_level),  # use variable_label
+    variable_level = sub("^[^.]*\\.", "", variable_level), # use variable_label
     stat_name = dplyr::recode(stat_name, "n" = "N", "count" = "n")
   ) |>
   dplyr::select(-c("variable_label"))
 
-head(rtables_result, n=5)
+head(rtables_result, n = 5)
 ```
 
 #### B. ARD reformat
@@ -115,7 +118,7 @@ ard_result <- ard_result |>
   ) |>
   dplyr::select(-c("context", "fmt_fn", "stat_label", "warning", "error"))
 
-head(ard_result, n=5)
+head(ard_result, n = 5)
 print("ARD dimensions")
 dim(ard_result)
 print("rtables Dimensions")
@@ -129,10 +132,11 @@ Here, it is `"ARM"`.  We can remove those statistics as they are not in the `rta
 ```{r}
 #| code-fold: false
 #| code-summary: "Show the code"
-ard_result <- ard_result |>  
-dplyr::filter(
-    !((variable == "ARM") ) | is.na(variable_level))|>
-   dplyr::mutate(variable_level = dplyr::if_else(stat_name == 'N' & is.na(variable_level) & variable != "AGE", 'n', variable_level))
+ard_result <- ard_result |>
+  dplyr::filter(
+    !((variable == "ARM")) | is.na(variable_level)
+  ) |>
+  dplyr::mutate(variable_level = dplyr::if_else(stat_name == "N" & is.na(variable_level) & variable != "AGE", "n", variable_level))
 ```
 
 #### C. Compare programmatically
@@ -141,10 +145,11 @@ Here we propose using the {diffdf} package to compare the statistics produced by
 ```{r}
 #| code-fold: false
 #| code-summary: "Show the code"
-diffdf::diffdf(rtables_result, 
-               ard_result, 
-               keys = c("group1_level","group1", "variable", "variable_level", "stat_name"), 
-               suppress_warnings = TRUE)
+diffdf::diffdf(rtables_result,
+  ard_result,
+  keys = c("group1_level", "group1", "variable", "variable_level", "stat_name"),
+  suppress_warnings = TRUE
+)
 ```
 
 The `anti_join()` function from the {dplyr} package can be used to isolate the differences between the two data.frames for closer analysis.
@@ -153,8 +158,9 @@ The `anti_join()` function from the {dplyr} package can be used to isolate the d
 #| code-fold: false
 #| code-summary: "Show the code"
 #| message: false
-differences <- ard_result |> #start with the data.frames which contain greater number of rows.
-  dplyr::anti_join(rtables_result, 
-                   # Compare based on key columns
-                   by = c("group1_level","group1", "variable", "variable_level", "stat_name")) 
+differences <- ard_result |> # start with the data.frames which contain greater number of rows.
+  dplyr::anti_join(rtables_result,
+    # Compare based on key columns
+    by = c("group1_level", "group1", "variable", "variable_level", "stat_name")
+  )
 ```

@@ -16,8 +16,8 @@ format:
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
-tlg_aet02 <- chevron:: aet02_main(chevron::syn_data, arm_var = "ARM", lbl_overall = "Overall ARM")
-head(tlg_aet02, n=15)
+tlg_aet02 <- chevron::aet02_main(chevron::syn_data, arm_var = "ARM", lbl_overall = "Overall ARM")
+head(tlg_aet02, n = 15)
 ```
 
 ### 2. Flatten the table into a data.frame
@@ -31,7 +31,7 @@ We also include a step to remove the "label" attribute for the statistics. The `
 rtables_result <- rtables::as_result_df(tlg_aet02, make_ard = TRUE, add_tbl_str_decimals = FALSE)
 attr(rtables_result$stat, "label") <- NULL
 
-rtables_result[1:6, -c(1:2, 7,8)]
+rtables_result[1:6, -c(1:2, 7, 8)]
 ```
 
 
@@ -68,13 +68,13 @@ ard_result <- ard_stack_hierarchical(
 
 ard_count_result <-
   ard_stack_hierarchical_count(
-  data = adae,
-  variables = c(ANL01FL, AEBODSYS),
-  by = ARM,
-  overall = TRUE,
-  denominator = ADSL)|>
+    data = adae,
+    variables = c(ANL01FL, AEBODSYS),
+    by = ARM,
+    overall = TRUE,
+    denominator = ADSL
+  ) |>
   dplyr::filter(context == "hierarchical_count")
-
 ```
 
 ### 4. Statistics Comparison
@@ -86,17 +86,18 @@ We'll modify the rtables result to closely match the ARD result:
 
 ```{r}
 rtables_result <- rtables_result |>
-  dplyr::rename(group1_level = group2_level,
-                group1 = group2,
-                group2 = group1,
-                group2_level = group1_level)
+  dplyr::rename(
+    group1_level = group2_level,
+    group1 = group2,
+    group2 = group1,
+    group2_level = group1_level
+  )
 
-head(rtables_result, n=10)
+head(rtables_result, n = 10)
 ```
 
 We can compare the data in subsets to minimize reformatting steps
 ```{r}
-
 # subgroup analysis
 rtables_result_sub1 <- rtables_result |>
   dplyr::filter(variable == "AEDECOD") |>
@@ -110,12 +111,15 @@ ard_sub1 <- ard_result |>
     stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     group1 = dplyr::case_when(
       group1 == "ANL01FL" ~ "ARM",
-      TRUE ~ group1),
+      TRUE ~ group1
+    ),
     group1_level = dplyr::case_when(
       group1_level == "Y" ~ "Overall ARM",
-      TRUE ~ group1_level)) |>
-   dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
-   
+      TRUE ~ group1_level
+    )
+  ) |>
+  dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
+
 
 diffdf::diffdf(rtables_result_sub1, ard_sub1, keys = c("group1", "group1_level", "variable", "variable_level", "stat"))
 ```
@@ -124,48 +128,55 @@ Compare the second subset
 
 ```{r}
 rtables_result_sub2 <- rtables_result |>
-  dplyr::filter(variable %in% c("USUBJID", "AEBODSYS") & variable_level != "nonunique")|>
+  dplyr::filter(variable %in% c("USUBJID", "AEBODSYS") & variable_level != "nonunique") |>
   dplyr::select(c("group1", "group1_level", "group2", "group2_level", "stat")) |>
-   dplyr::rename(variable = group2,
-                variable_level = group2_level) |>
-  dplyr::mutate(variable = dplyr::coalesce(variable, "ANL01FL"),
-                variable_level = dplyr::coalesce(variable_level, "Y"))
-  
+  dplyr::rename(
+    variable = group2,
+    variable_level = group2_level
+  ) |>
+  dplyr::mutate(
+    variable = dplyr::coalesce(variable, "ANL01FL"),
+    variable_level = dplyr::coalesce(variable_level, "Y")
+  )
+
 
 ard_sub2 <- ard_result |>
   dplyr::filter(variable %in% c("ANL01FL", "AEBODSYS")) |>
-   dplyr::mutate(
+  dplyr::mutate(
     group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
     variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
     stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
-     group1 = dplyr::recode(group1, "ANL01FL" = "ARM"),
+    group1 = dplyr::recode(group1, "ANL01FL" = "ARM"),
     group1_level = dplyr::recode(group1_level, "Y" = "Overall ARM"),
     group1 = dplyr::coalesce(group1, "ARM"),
-    group1_level = dplyr::coalesce(group1_level, "Overall ARM"))|>
+    group1_level = dplyr::coalesce(group1_level, "Overall ARM")
+  ) |>
   dplyr::select(c("group1", "group1_level", "variable", "variable_level", "stat"))
-   
+
 diffdf::diffdf(rtables_result_sub2, ard_sub2, keys = c("group1", "group1_level", "variable", "variable_level", "stat"))
 ```
 
 Total Number of Events (ARD counts data.frame)
 
 ```{r}
-
 # reformat rtables
 rtables_count <- rtables_result |>
   dplyr::filter(variable_label %in% c("Total number of events", "Overall total number of events")) |>
-  dplyr::mutate(group2 = dplyr::case_when(
-    variable_label == "Overall total number of events" ~ "ANL01FL",
-    TRUE ~ group2 ),
-  group2_level = dplyr::case_when(
+  dplyr::mutate(
+    group2 = dplyr::case_when(
+      variable_label == "Overall total number of events" ~ "ANL01FL",
+      TRUE ~ group2
+    ),
+    group2_level = dplyr::case_when(
       variable_label == "Overall total number of events" ~ "Y",
-      TRUE ~ group2_level 
-    )) |>
+      TRUE ~ group2_level
+    )
+  ) |>
   dplyr::select("group1", "group1_level", "group2", "group2_level", "stat")
 
 # reformat ARD result
 ard_count_result <- ard_count_result |>
-   dplyr::mutate(
+  dplyr::mutate(
     group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
     variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
     stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
@@ -173,13 +184,18 @@ ard_count_result <- ard_count_result |>
     group1_level = dplyr::coalesce(group1_level, "Overall ARM"),
     group1 = dplyr::case_when(
       group1 == "ANL01FL" ~ "ARM",
-      TRUE ~ group1),
+      TRUE ~ group1
+    ),
     group1_level = dplyr::case_when(
       group1_level == "Y" ~ "Overall ARM",
-      TRUE ~ group1_level))|>
+      TRUE ~ group1_level
+    )
+  ) |>
   dplyr::select("group1", "group1_level", "variable", "variable_level", "stat") |>
-  dplyr::rename(group2 = variable,
-                group2_level = variable_level)
+  dplyr::rename(
+    group2 = variable,
+    group2_level = variable_level
+  )
 
 diffdf::diffdf(rtables_count, ard_count_result, keys = c("group1", "group1_level", "group2", "group2_level", "stat"))
 ```
