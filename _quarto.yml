@@ -15,10 +15,8 @@ website:
 
   page-footer:
     left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#0f1b66"
 
   sidebar:
-    background: "#0f1b66"
     logo: "images/ard-c-logo.png"
     pinned: true
     align: center
@@ -44,5 +42,5 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme: flatly
 editor: source
