@@ -118,14 +118,6 @@ rtables_result_overall <- rtables_result |>
 rtables_result <- rtables_result |>
   dplyr::filter(group1_level != "Overall ARM")
 ```
-Based on dimensions alone - we can see that tables likely generated similar results
-
-```{r, eval=TRUE}
-print("rtables Dimensions")
-dim(rtables_result)
-print("ARD Dimensions")
-dim(ard_result)
-```
 
 ##### B. ARD reformat
 We'll also need some format adjustments for the ARD object. Primarily, converting lists to vectors (character or numeric) to match the rtables_result format. Not doing so will result in an incompatible comparison errors in `diffdf()`.
@@ -179,7 +171,6 @@ diffdf::diffdf(ard_result,
   suppress_warnings = TRUE
 )
 ```
-
 
 ##### Compare the overall_arm
 

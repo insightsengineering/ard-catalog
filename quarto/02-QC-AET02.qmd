@@ -39,7 +39,7 @@ We also include a step to remove the "label" attribute for the statistics. The `
 rtables_result <- rtables::as_result_df(tlg_aet02, make_ard = TRUE, add_tbl_str_decimals = FALSE)
 attr(rtables_result$stat, "label") <- NULL
 
-rtables_result[1:6, -c(1:2, 7, 8)]
+rtables_result[1:6, c("group2", "group2_level", "variable", "variable_level", "stat")]
 ```
 
 
