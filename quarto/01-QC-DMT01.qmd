@@ -17,10 +17,10 @@ format:
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
-library(chevron)
+library(cards)
 
 # Create a table using the chevron package
-tlg_dmt01 <- chevron::dmt01_main(syn_data, summaryvars = c("AGE", "AGEGR1", "SEX", "ETHNIC", "RACE"))
+tlg_dmt01 <- chevron::dmt01_main(chevron::syn_data, summaryvars = c("AGE", "SEX"))
 head(tlg_dmt01, n = 15)
 ```
 
@@ -33,7 +33,7 @@ The `make_ard` argument set to `TRUE`, will format the data similar to the outpu
 #| code-fold: false
 #| code-summary: "Show the code"
 rtables_result <- rtables::as_result_df(tlg_dmt01, make_ard = TRUE, add_tbl_str_decimals = FALSE)
-rtables_result[1:6, -c(2:4)]
+rtables_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]
 ```
 
 ### 3. Create a comparable ARD
@@ -47,23 +47,22 @@ Note: when a `by` variable is specified in the  `ard_stack()` call, a univariate
 ```{r}
 #| code-fold: false
 #| code-summary: "Show the code"
-library(cards)
 
 # build ARDs that calculate relevant statistics for continuous and categorical variables.
 ard_result <-
   ard_stack(
-    syn_data$adsl,
+    chevron::syn_data$adsl,
     ard_continuous(
       variables = c(AGE),
       statistic = ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))
     ),
-    ard_categorical(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic = everything() ~ c("n", "p")),
-    ard_missing(variables = c(AGEGR1, SEX, ETHNIC, RACE), statistic = everything() ~ c("N_obs")),
+    ard_categorical(variables = c(SEX), statistic = everything() ~ c("n", "p")),
+    ard_missing(variables = c(SEX), statistic = everything() ~ c("N_obs")),
     .by = "ARM",
     .overall = TRUE
   )
 
-ard_result[1:6, -c(1, 9:11)]
+ard_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]
 ```
 
 ### 4.Statistics comparison
@@ -72,7 +71,7 @@ ard_result[1:6, -c(1, 9:11)]
 In order to compare the two data.frames programatically, some identifying variables must align to be used as "key columns". Below are some data wrangling steps used to match the statistics for comparison. Note the {rtables} output:
 
 ```{r}
-tail(rtables_result[, -c(1:2)])
+tail(rtables_result)
 ```
 
 The `variable_level` leads with the statistic name, followed by `"."` and then the actual level that matches the `variable_level` in the ARD object. We will mutate the level to match the level values in the ARD object. Similarly, the total number of observations for a group is labelled `"N"` in the ARD object, while it is named `"n"` in the {rtables} object. The following manipulations are completed below:
@@ -83,6 +82,8 @@ The `variable_level` leads with the statistic name, followed by `"."` and then t
 4.  Remove columns we know won't be in the ARD data.frame for simplicity (ie.variable label)
 
 ```{r}
+#| code-fold: false
+#| code-summary: "Show the code"
 rtables_result <- rtables_result |>
   dplyr::mutate(
     variable_level = dplyr::case_when(
@@ -94,19 +95,21 @@ rtables_result <- rtables_result |>
   ) |>
   dplyr::select(-c("variable_label"))
 
-head(rtables_result, n = 5)
+head(rtables_result, n = 10)
 ```
 
 #### B. ARD reformat
 A reformatting step is necessary for the ARD output to complete the comparison. Note that many of the columns in the {cards} objects are a list (for example, the level of the variable followed by the levels available for the factor).
 
 ```{r}
-ard_result$group1_level[1]
+unlist(ard_result$group1_level[1])
 ```
 
 We will pull the first string from the lis (`group1_level`, `variable_level`). We'll also add the string "ARM" to any `NULL` observations in the `group1` column to match the {rtables} result.
 
 ```{r}
+#| code-fold: false
+#| code-summary: "Show the code"
 ard_result <- ard_result |>
   dplyr::mutate(
     group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
@@ -117,12 +120,6 @@ ard_result <- ard_result |>
     stat_name = dplyr::recode(stat_name, "N_obs" = "N")
   ) |>
   dplyr::select(-c("context", "fmt_fn", "stat_label", "warning", "error"))
-
-head(ard_result, n = 5)
-print("ARD dimensions")
-dim(ard_result)
-print("rtables Dimensions")
-dim(rtables_result)
 ```
 
 Note that the ARD result is larger than the {rtables} result. 
@@ -150,17 +147,4 @@ diffdf::diffdf(rtables_result,
   keys = c("group1_level", "group1", "variable", "variable_level", "stat_name"),
   suppress_warnings = TRUE
 )
-```
-
-The `anti_join()` function from the {dplyr} package can be used to isolate the differences between the two data.frames for closer analysis.
-
-```{r}
-#| code-fold: false
-#| code-summary: "Show the code"
-#| message: false
-differences <- ard_result |> # start with the data.frames which contain greater number of rows.
-  dplyr::anti_join(rtables_result,
-    # Compare based on key columns
-    by = c("group1_level", "group1", "variable", "variable_level", "stat_name")
-  )
 ```
