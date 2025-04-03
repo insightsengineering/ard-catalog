@@ -11,17 +11,24 @@ format:
 ---
 
 ## Time-to-event Summary (TTET01) QC Workflow
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+# load libraries
+library(cards)
+library(cardx)
+library(dplyr)
+library(survival)
+```
 
 ### 1. Generate a table using {chevron}
 
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
-library(chevron)
-
 # Create a table using the chevron package
-proc_data <- dunlin::log_filter(syn_data, PARAMCD == "PFS", "adtte")
-tlg_ttet01 <- chevron::run(ttet01, proc_data)
+proc_data <- dunlin::log_filter(chevron::syn_data, PARAMCD == "PFS", "adtte")
+tlg_ttet01 <- chevron::run(chevron::ttet01, proc_data)
 head(tlg_ttet01, n = 15)
 ```
 
@@ -46,11 +53,6 @@ Note: when a 'by' variable is specified in the  `ard_stack()` call, a univariate
 #| code-fold: false
 #| code-summary: "Show the code"
 #| message: false
-library(cards)
-library(cardx)
-library(dplyr)
-library(survival)
-
 # Data Pre-processing
 adtte <- proc_data$adtte |>
   dplyr::mutate(

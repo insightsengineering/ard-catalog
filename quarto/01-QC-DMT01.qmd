@@ -11,14 +11,17 @@ format:
 ---
 
 ## Demographics and Baseline Characteristics (DMT01) QC Workflow
-
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+# load libraries
+library(cards)
+```
 ### 1. Generate a table using {chevron}
 
 ```{r}
 #| message: false
 #| code-summary: "Show the code"
-library(cards)
-
 # Create a table using the chevron package
 tlg_dmt01 <- chevron::dmt01_main(chevron::syn_data, summaryvars = c("AGE", "SEX"))
 head(tlg_dmt01, n = 15)

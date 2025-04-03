@@ -11,6 +11,12 @@ format:
 ---
 
 ## Laboratory Test Results and Change from Baseline by Visit (LBT01) QC Workflow
+```{r}
+#| message: false
+#| code-summary: "Show the code"
+# load libraries
+library(cards)
+```
 
 ### 1. Generate a table using {chevron}
 
@@ -50,8 +56,6 @@ We'll keep the stats for the overall column in a separate data.frame to generali
 #| code-fold: false
 #| message: false
 #| code-summary: "Show the code"
-library(cards)
-
 adlb <- chevron::syn_data$adlb
 
 ard_result <- ard_continuous(adlb,
