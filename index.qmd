@@ -5,12 +5,14 @@ editor:
   markdown: 
     wrap: 72
 ---
-# Overview
+## Overview
 
 The current procedure for generating clinical reporting tables employs
 NEST packages such as {rtables}, {tern} and {chevron}. These packages
 create complex table structures and generate statistics that should be
 programmatically compared.
+
+## QCing Workflow
 
 In these documents, we will showcase how the {cards} and {cardx}
 packages can be used to QC common outputs generated using {rtables}
@@ -27,17 +29,12 @@ steps:
 
 4.  Compare both data.frames to QC each result in the table.
 
-[`r fontawesome::fa("github")`
-{cards}](https://github.com/insightsengineering/cards) v.0.5.1
+**{cards}** *v.0.5.1*
 
-[`r fontawesome::fa("github")`
-{cardx}](https://github.com/insightsengineering/cardx) v.0.2.3
+**{cardx}** *v.0.2.3*
 
-[`r fontawesome::fa("github")`
-{rtables}](https://github.com/insightsengineering/rtables) v.0.6.11.9016
+**{rtables}** *v.0.6.11.9016* (development)
 
-[`r fontawesome::fa("github")`
-{tern}](https://github.com/insightsengineering/tern) v.0.9.7
+**{tern}** *v.0.9.7* (development)
 
-[`r fontawesome::fa("github")`
-{chevron}](https://github.com/insightsengineering/chevron) v.0.2.10
+**{chevron}** *v.0.2.10*

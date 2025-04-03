@@ -15,8 +15,10 @@ website:
 
   page-footer:
     left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
+    background: "#99B1C6"
 
   sidebar:
+    background: "#99B1C6"
     logo: "images/ard-c-logo.png"
     pinned: true
     align: center
@@ -42,5 +44,8 @@ website:
 
 format:
   html:
-    theme: flatly
+    theme: [cosmo, theme.scss]
+    mainfont: "Atkinson Hyperlegible"
+    highlight-style: a11y
+
 editor: source
