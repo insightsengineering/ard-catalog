@@ -12,17 +12,32 @@ NEST packages such as {rtables}, {tern} and {chevron}. These packages
 create complex table structures and generate statistics that should be
 programmatically compared.
 
-In this document, we will showcase how the {cards} and {cardx} packages
-can be used to QC common outputs generated using NEST packages.
+In these documents, we will showcase how the {cards} and {cardx}
+packages can be used to QC common outputs generated using {rtables}
+suite of packages. The workflow can be generalized into the following
+steps:
+
+1.  Flattening the {rtables} output into a data.frame. The data.frame
+    has one line per statistics that appears in the summary table.
+
+2.  Create a comparable Analysis Result Dataset (ARD), with a similar
+    structure: one line per statistic.
+
+3.  We then modify each of the data.frames to have the same structure.
+
+4.  Compare both data.frames to QC each result in the table.
 
 [`r fontawesome::fa("github")`
-{cards}](https://github.com/insightsengineering/cards)
+{cards}](https://github.com/insightsengineering/cards) v.0.5.1
 
 [`r fontawesome::fa("github")`
-{rtables}](https://github.com/insightsengineering/rtables)
+{cardx}](https://github.com/insightsengineering/cardx) v.0.2.3
 
 [`r fontawesome::fa("github")`
-{tern}](https://github.com/insightsengineering/tern)
+{rtables}](https://github.com/insightsengineering/rtables) v.0.6.11.9016
 
 [`r fontawesome::fa("github")`
-{chevron}](https://github.com/insightsengineering/chevron)
+{tern}](https://github.com/insightsengineering/tern) v.0.9.7
+
+[`r fontawesome::fa("github")`
+{chevron}](https://github.com/insightsengineering/chevron) v.0.2.10
