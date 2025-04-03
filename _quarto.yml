@@ -15,10 +15,8 @@ website:
 
   page-footer:
     left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#0f1b66"
 
   sidebar:
-    background: "#0f1b66"
     logo: "images/ard-c-logo.png"
     pinned: true
     align: center
@@ -39,8 +37,10 @@ website:
       text: Lab Results Table
     - href: quarto/04-QC-TTET01.qmd
       text: Time-to-Event Table
+    - href: quarto/05-formatting.qmd
+      text: Formatting Statistics
 
 format:
   html:
-    theme: cosmo
+    theme: flatly
 editor: source
