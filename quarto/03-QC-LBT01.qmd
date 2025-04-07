@@ -62,8 +62,10 @@ ard_result <- ard_continuous(adlb,
   strata = c(ACTARM, PARAMCD, AVISIT),
   variables = c(AVAL, CHG),
   statistic =
-    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
-)
+    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))) |>
+  apply_fmt_fn() |>
+  unlist_ard_columns()
+  
 
 # calculate overall statistics
 ard_overall <- ard_continuous(adlb,
@@ -71,7 +73,9 @@ ard_overall <- ard_continuous(adlb,
   variables = c(AVAL, CHG),
   statistic =
     list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
-)
+) |>
+   apply_fmt_fn() |>
+  unlist_ard_columns()
 ```
 
 ### 4.Statistics comparison
@@ -130,10 +134,6 @@ We'll also need some format adjustments for the ARD object. Primarily, convertin
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     stat = dplyr::recode(stat, `NaN` = NA_real_)
   )
 
@@ -149,9 +149,6 @@ ard_overall <- ard_overall |>
   dplyr::mutate(
     group1 = "ACTARM",
     group1_level = "Overall ARM",
-    group2_level = purrr::map_chr(group2_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    group3_level = purrr::map_chr(group3_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA)),
     stat = dplyr::recode(stat, `NaN` = NA_real_)
   ) |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat))

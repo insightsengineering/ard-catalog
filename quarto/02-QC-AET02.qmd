@@ -69,6 +69,8 @@ ard_result <- ard_stack_hierarchical(
   id = USUBJID,
   statistic = ~ c("n", "p")
 ) |>
+  apply_fmt_fn() |>
+  unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical")
 
 ard_count_result <-
@@ -79,6 +81,8 @@ ard_count_result <-
     overall = TRUE,
     denominator = ADSL
   ) |>
+  apply_fmt_fn() |>
+  unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical_count")
 ```
 
@@ -115,9 +119,6 @@ rtables_result_sub1 <- rtables_result |>
 ard_sub1 <- ard_result |>
   dplyr::filter(variable == "AEDECOD") |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     group1 = dplyr::case_when(
       group1 == "ANL01FL" ~ "ARM",
       TRUE ~ group1
@@ -150,13 +151,9 @@ rtables_result_sub2 <- rtables_result |>
     variable_level = dplyr::coalesce(variable_level, "Y")
   )
 
-
 ard_sub2 <- ard_result |>
   dplyr::filter(variable %in% c("ANL01FL", "AEBODSYS")) |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     group1 = dplyr::recode(group1, "ANL01FL" = "ARM"),
     group1_level = dplyr::recode(group1_level, "Y" = "Overall ARM"),
     group1 = dplyr::coalesce(group1, "ARM"),
@@ -190,9 +187,6 @@ rtables_count <- rtables_result |>
 # reformat ARD result
 ard_count_result <- ard_count_result |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     group1 = dplyr::coalesce(group1, "ARM"),
     group1_level = dplyr::coalesce(group1_level, "Overall ARM"),
     group1 = dplyr::case_when(

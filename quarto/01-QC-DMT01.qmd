@@ -63,7 +63,9 @@ ard_result <-
     ard_missing(variables = c(SEX), statistic = everything() ~ c("N_obs")),
     .by = "ARM",
     .overall = TRUE
-  )
+  ) |>
+  apply_fmt_fn() |>
+  unlist_ard_columns()
 
 ard_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]
 ```
@@ -102,27 +104,17 @@ head(rtables_result, n = 10)
 ```
 
 #### B. ARD reformat
-A reformatting step is necessary for the ARD output to complete the comparison. Note that many of the columns in the {cards} objects are a list (for example, the level of the variable followed by the levels available for the factor).
-
-```{r}
-unlist(ard_result$group1_level[1])
-```
-
-We will pull the first string from the lis (`group1_level`, `variable_level`). We'll also add the string "ARM" to any `NULL` observations in the `group1` column to match the {rtables} result.
+A reformatting step is necessary for the ARD output to complete the comparison. We'll add the string "ARM" to any `NULL` observations in the `group1` column to match the {rtables} result.
 
 ```{r}
 #| code-fold: false
 #| code-summary: "Show the code"
 ard_result <- ard_result |>
   dplyr::mutate(
-    group1_level = purrr::map_chr(group1_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    variable_level = purrr::map_chr(variable_level, ~ ifelse(length(.x) > 0, as.character(.x[[1]]), NA_real_)),
-    stat = purrr::map_dbl(stat, ~ ifelse(length(.x) > 0, as.numeric(.x[[1]]), NA_real_)),
     group1 = dplyr::coalesce(group1, "ARM"),
     group1_level = dplyr::coalesce(group1_level, "All Patients"),
     stat_name = dplyr::recode(stat_name, "N_obs" = "N")
-  ) |>
-  dplyr::select(-c("context", "fmt_fn", "stat_label", "warning", "error"))
+  )
 ```
 
 Note that the ARD result is larger than the {rtables} result. 
