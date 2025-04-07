@@ -38,7 +38,6 @@ Setting the `add_tbl_str_decimals` to `FALSE` will not return a column with the 
 
 ```{r, warning=FALSE}
 #| code-fold: false
-#| code-summary: "Show the code"
 rtables_result <- rtables::as_result_df(tlg_lbt01, make_ard = TRUE, add_tbl_str_decimals = FALSE)
 ```
 
@@ -55,17 +54,17 @@ We'll keep the stats for the overall column in a separate data.frame to generali
 ```{r}
 #| code-fold: false
 #| message: false
-#| code-summary: "Show the code"
 adlb <- chevron::syn_data$adlb
 
 ard_result <- ard_continuous(adlb,
   strata = c(ACTARM, PARAMCD, AVISIT),
   variables = c(AVAL, CHG),
   statistic =
-    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))) |>
+    list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
+) |>
   apply_fmt_fn() |>
   unlist_ard_columns()
-  
+
 
 # calculate overall statistics
 ard_overall <- ard_continuous(adlb,
@@ -74,7 +73,7 @@ ard_overall <- ard_continuous(adlb,
   statistic =
     list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
 ) |>
-   apply_fmt_fn() |>
+  apply_fmt_fn() |>
   unlist_ard_columns()
 ```
 
@@ -83,17 +82,16 @@ ard_overall <- ard_continuous(adlb,
 #### A. {rtables} reformat
 Some reformatting is required to ensure the resulting data.frames are compatible. Most of the reformatting is adjusting the column names to match that of the ARD result.
 
-  1.  rename `group3` and `group3_level`, to `group1` and `group1_level` (contains "ARM" values).
-  2.  rename `group1` and `group1_level`, to `group2` and `group2_level` (contains "PARAMCD" values).
-  3.  rename `group2` and `group2_level`, to  `group3` and `group3_level` (contains "AVISIT" values).
-  4.  recode `stat` `n` value to `N` to match ARD
+  1.  Rename `group3` and `group3_level`, to `group1` and `group1_level` (contains "ARM" values).
+  2.  Rename `group1` and `group1_level`, to `group2` and `group2_level` (contains "PARAMCD" values).
+  3.  Rename `group2` and `group2_level`, to  `group3` and `group3_level` (contains "AVISIT" values).
+  4.  Recode `stat` `n` value to `N` to match ARD
   5.  Select columns relevant to comparison
 
 We'll also separate the statistics related to the overall ARM to match the `ard_overall` object.
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
 rtables_result <- rtables_result |>
   dplyr::mutate(
     stat_name = dplyr::recode(stat_name, "n" = "N"),
@@ -124,13 +122,13 @@ rtables_result <- rtables_result |>
 ```
 
 ##### B. ARD reformat
-We'll also need some format adjustments for the ARD object. Primarily, converting lists to vectors (character or numeric) to match the rtables_result format. Not doing so will result in an incompatible comparison errors in `diffdf()`.
+We'll also need some format adjustments for the ARD object.
 
 1.  Select columns relevant to comparison
-2.  Convert any list columns to character and numeric
-3.  Convert any `NaN` stats to `NA` to match {rtables}
+2.  Convert any `NaN` stats to `NA` to match {rtables}
 
 ```{r}
+#| code-fold: false
 ard_result <- ard_result |>
   dplyr::select(c(group1, group1_level, group2, group2_level, group3, group3_level, variable, stat_name, stat)) |>
   dplyr::mutate(
@@ -157,10 +155,9 @@ head(ard_result, n = 10)
 ```
 
 #### C. Compare programmatically
-Use the diffdf package to compare the results.
+  Use the {diffdf} package to compare the results.
 
 ```{r, eval=TRUE}
-#| code-summary: "Show the code"
 #| code-fold: false
 diffdf::diffdf(ard_result,
   rtables_result,
@@ -172,7 +169,6 @@ diffdf::diffdf(ard_result,
 ##### Compare the overall_arm
 
 ```{r, eval=TRUE}
-#| code-summary: "Show the code"
 #| code-fold: false
 diffdf::diffdf(ard_overall,
   rtables_result_overall,

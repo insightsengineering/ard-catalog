@@ -29,7 +29,7 @@ steps:
 
 4.  Compare both data.frames to QC each result in the table.
 
-**{cards}** *v.0.5.1*
+**{cards}** *v.0.5.1.9009* (development)
 
 **{cardx}** *v.0.2.3*
 

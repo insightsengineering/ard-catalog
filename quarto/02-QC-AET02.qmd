@@ -35,7 +35,6 @@ We also include a step to remove the "label" attribute for the statistics. The `
 ```{r}
 #| message: false
 #| code-fold: false
-#| code-summary: "Show the code"
 rtables_result <- rtables::as_result_df(tlg_aet02, make_ard = TRUE, add_tbl_str_decimals = FALSE)
 attr(rtables_result$stat, "label") <- NULL
 
@@ -50,7 +49,6 @@ Then, we generate separate ARDs using the {cards} package for the different sect
 Note: If your table does not have an "overall" column, you can use the ARD creation steps at the bottom of the page using primarily `ard_categorical()`. `ard_hierarchical()` is useful here to calculate the statistics for the overall column and allows for better filtering using the "context" column.
 
 ```{r}
-#| code-summary: "Show the code"
 #| code-fold: false
 #| message: false
 # data pre-processing. filter observations with ANL01FL = "Y"
@@ -95,7 +93,7 @@ We'll modify the rtables result to closely match the ARD result:
 
 ```{r}
 #| message: false
-#| code-summary: "Show the code"
+#| code-fold: false
 rtables_result <- rtables_result |>
   dplyr::rename(
     group1_level = group2_level,
@@ -109,8 +107,8 @@ head(rtables_result, n = 10)
 
 We can compare the data in subsets to minimize reformatting steps
 ```{r}
+#| code-fold: false
 #| message: false
-#| code-summary: "Show the code"
 # subgroup analysis
 rtables_result_sub1 <- rtables_result |>
   dplyr::filter(variable == "AEDECOD") |>
@@ -137,8 +135,8 @@ diffdf::diffdf(rtables_result_sub1, ard_sub1, keys = c("group1", "group1_level",
 Compare the second subset
 
 ```{r}
+#| code-fold: false
 #| message: false
-#| code-summary: "Show the code"
 rtables_result_sub2 <- rtables_result |>
   dplyr::filter(variable %in% c("USUBJID", "AEBODSYS") & variable_level != "nonunique") |>
   dplyr::select(c("group1", "group1_level", "group2", "group2_level", "stat")) |>
@@ -167,8 +165,8 @@ diffdf::diffdf(rtables_result_sub2, ard_sub2, keys = c("group1", "group1_level",
 Total Number of Events (ARD counts data.frame)
 
 ```{r}
+#| code-fold: false
 #| message: false
-#| code-summary: "Show the code"
 # reformat rtables
 rtables_count <- rtables_result |>
   dplyr::filter(variable_label %in% c("Total number of events", "Overall total number of events")) |>

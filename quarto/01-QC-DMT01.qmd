@@ -34,7 +34,6 @@ The `make_ard` argument set to `TRUE`, will format the data similar to the outpu
 
 ```{r, warning=FALSE}
 #| code-fold: false
-#| code-summary: "Show the code"
 rtables_result <- rtables::as_result_df(tlg_dmt01, make_ard = TRUE, add_tbl_str_decimals = FALSE)
 rtables_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]
 ```
@@ -49,8 +48,6 @@ Note: when a `by` variable is specified in the  `ard_stack()` call, a univariate
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
-
 # build ARDs that calculate relevant statistics for continuous and categorical variables.
 ard_result <-
   ard_stack(
@@ -88,7 +85,6 @@ The `variable_level` leads with the statistic name, followed by `"."` and then t
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
 rtables_result <- rtables_result |>
   dplyr::mutate(
     variable_level = dplyr::case_when(
@@ -104,17 +100,17 @@ head(rtables_result, n = 10)
 ```
 
 #### B. ARD reformat
-A reformatting step is necessary for the ARD output to complete the comparison. We'll add the string "ARM" to any `NULL` observations in the `group1` column to match the {rtables} result.
+A reformatting step is necessary for the ARD output to complete the comparison. We'll add the string "ARM" to any `NULL` observations in the `group1` column to match the {rtables} result and add the "All Patients" label to the `group1_level`.
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
 ard_result <- ard_result |>
   dplyr::mutate(
     group1 = dplyr::coalesce(group1, "ARM"),
     group1_level = dplyr::coalesce(group1_level, "All Patients"),
     stat_name = dplyr::recode(stat_name, "N_obs" = "N")
-  )
+  ) |>
+    dplyr::select(c("group1_level", "group1", "variable", "variable_level", "stat_name", "stat"))
 ```
 
 Note that the ARD result is larger than the {rtables} result. 
@@ -123,23 +119,22 @@ Here, it is `"ARM"`.  We can remove those statistics as they are not in the `rta
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
 ard_result <- ard_result |>
   dplyr::filter(
-    !((variable == "ARM")) | is.na(variable_level)
-  ) |>
+    !((variable == "ARM")) | is.na(variable_level)) |>
   dplyr::mutate(variable_level = dplyr::if_else(stat_name == "N" & is.na(variable_level) & variable != "AGE", "n", variable_level))
 ```
 
 #### C. Compare programmatically
-Here we propose using the {diffdf} package to compare the statistics produced by the two table engines. {diffdf} is designed to compare two data.frames and report any differences/inconsistencies to the user.
+Here we propose using the {diffdf} package to compare the statistics produced by the two table engines. {diffdf} is designed to compare two data.frames and report any differences/inconsistencies to the user. 
 
 ```{r}
 #| code-fold: false
-#| code-summary: "Show the code"
 diffdf::diffdf(rtables_result,
   ard_result,
   keys = c("group1_level", "group1", "variable", "variable_level", "stat_name"),
   suppress_warnings = TRUE
 )
 ```
+
+If there are any differences you wish to explore, the above code can be assigned to an object which will collect the reported differences.
