@@ -5,30 +5,31 @@ editor:
   markdown: 
     wrap: 72
 ---
-## Overview
+# Overview
 
 The current procedure for generating clinical reporting tables employs
 NEST packages such as {rtables}, {tern} and {chevron}. These packages
 create complex table structures and generate statistics that should be
-programmatically compared.
+programmatically compared. This repository provides a collection of Quality 
+Control (QC) workflows for common clinical trial outputs. Statistics calculated 
+using the {rtables} based suite of packages are compared against statistics 
+returned in a Analysis Result Dataset (ARD) using the {cards} and {cardx} packages.
 
 ## QCing Workflow
 
-In these documents, we will showcase how the {cards} and {cardx}
-packages can be used to QC common outputs generated using {rtables}
-suite of packages. The workflow can be generalized into the following
-steps:
+The workflow can be generalized into the following steps:
 
 1.  Flattening the {rtables} output into a data.frame. The data.frame
     has one line per statistics that appears in the summary table.
-
+    
 2.  Create a comparable Analysis Result Dataset (ARD), with a similar
     structure: one line per statistic.
 
-3.  We then modify each of the data.frames to have the same structure.
+3.  We then modify/reformat each of the data.frames to have the same structure.
 
 4.  Compare both data.frames to QC each result in the table.
 
+## Package Versions
 **{cards}** *v.0.5.1.9009* (development)
 
 **{cardx}** *v.0.2.3*
