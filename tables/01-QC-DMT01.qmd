@@ -132,4 +132,4 @@ diffdf::diffdf(rtables_result,
 )
 ```
 
-If there are any differences you wish to explore, the above code can be assigned to an object which will collect the reported differences.
+If there are any differences you wish to explore, the above code can be assigned to an object which will collect the reported differences(comparison based on key columns, see `dplyr::anti_join()`).

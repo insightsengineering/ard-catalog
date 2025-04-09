@@ -36,6 +36,6 @@ The workflow can be generalized into the following steps:
 
 **{rtables}** *v.0.6.11.9016* (development)
 
-**{tern}** *v.0.9.7* (development)
+**{tern}** *v.0.9.7*
 
 **{chevron}** *v.0.2.10*
