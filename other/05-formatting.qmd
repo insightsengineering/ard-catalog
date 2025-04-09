@@ -87,4 +87,3 @@ ard_with_iec_round_option <- ard_continuous(ADSL,
 
 ard_with_iec_round_option[11:15, ]
 ```
-

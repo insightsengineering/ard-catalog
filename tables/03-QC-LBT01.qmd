@@ -95,7 +95,8 @@ rtables_result <- rtables_result |>
     stat_name = dplyr::recode(stat_name, "n" = "N"),
     group4_level = dplyr::recode(group4_level,
       "Analysis Value" = "AVAL",
-      "Absolute Change from Baseline" = "CHG")
+      "Absolute Change from Baseline" = "CHG"
+    )
   ) |>
   dplyr::rename(
     variable = group4_level,

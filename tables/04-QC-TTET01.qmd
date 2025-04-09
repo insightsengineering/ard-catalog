@@ -133,7 +133,7 @@ Survival Time Difference estimates are calculated usually calculated by the trea
 ```{r}
 # difference in event free rate
 # relevel the ARM variable to match the calculation done in tern
-adtte$ARM <- forcats::fct_relevel (adtte$ARM,  "B: Placebo" , after = 0)
+adtte$ARM <- forcats::fct_relevel(adtte$ARM, "B: Placebo", after = 0)
 ard_surv_time_diff_1 <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value")) |>
@@ -143,7 +143,7 @@ ard_surv_time_diff_1 <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.i
   mutate(group1_level = "B: Placebo")
 
 
-adtte$ARM <- forcats::fct_relevel (adtte$ARM,  "B: Placebo" , after = 3)
+adtte$ARM <- forcats::fct_relevel(adtte$ARM, "B: Placebo", after = 3)
 ard_surv_time_diff_2 <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value")) |>
