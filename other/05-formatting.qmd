@@ -1,0 +1,89 @@
+ ---
+title: "Formatting Statistics"
+editor: source
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    code-summary: "Show the code"
+    code-overflow: scroll 
+    df-print: kable
+---
+
+When running the QC workflow with ARDs, there may be discrepancies due to rounding methodologies. 
+
+The {rtables} package uses R's default "round-to-even" rounding (IEC 60559), while the {cards} package uses the standard rounding scheme (round-half-up: where values exactly halfway between two numbers are rounded up). If you are comparing rounded numbers in your analysis, we recommend applying a formatting function to your ARD statistics to match the {rtables} rounding scheme.
+
+Make note of the median, and range values in the {rtables} result.
+```{r}
+result <- rtables::basic_table(show_colcounts = TRUE) |>
+  rtables::split_cols_by(var = "ARM") |>
+  tern::analyze_vars(
+    vars = "BMIBL",
+    .formats = c("mean_sd" = "xx. / xx.", "median" = "xx.", "range" = "(xx., xx.)")
+  ) |> # rounding stats to whole numbers
+  rtables::build_table(cards::ADSL)
+
+result_df <- rtables::as_result_df(result, make_ard = T)
+
+result_df[, c("group1_level", "stat_name", "stat_string")]
+```
+
+
+```{r}
+library(cards)
+
+ard_formatting <- ard_continuous(ADSL,
+  by = TRT01A, variables = "BMIBL",
+  fmt_fn = everything() ~ list(everything() ~ "xx")
+) |>
+  apply_fmt_fn() |>
+  dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
+
+ard_formatting
+```
+
+Compare the {rtables} formatted string and the {cards} formatted string
+
+```{r}
+compare_df <- cbind(
+  ard_formatting[, c("group1_level", "stat_name", "stat", "stat_fmt")],
+  result_df[, "stat_string"]
+)
+
+compare_df[11:15, ]
+```
+Notice how the rounded maximum value is "34" for the "Xanomeline High Dose" group using {rtables} while the stat is "35" when rounded in {cards}.
+
+To apply the same rounding function as {rtables}, use the `fmt_fn` parameter in the ARD building function followed by the `apply_fmt_fn`. You can also apply the `update_ard_fmt_fn`.
+
+```{r}
+ard_iec_rounding <- ard_formatting |>
+  update_ard_fmt_fn(
+    stat_names = "max",
+    fmt_fn = round
+  ) |>
+  apply_fmt_fn(replace = T)
+
+compare_df <- cbind(compare_df, ard_iec_rounding[, "stat_fmt"])
+
+compare_df[11:15, ]
+```
+
+The easiest setting would be to set an option at the beginning of your script:
+```{r}
+options(cards.round_type = "round-to-even")
+```
+
+This will update the global environment to apply this rounding method in cards. Below is the same code as the earlier ARD creation steps, but generates the rounded values similar to rtables directly.
+
+```{r}
+ard_with_iec_round_option <- ard_continuous(ADSL,
+  by = TRT01A, variables = "BMIBL",
+  fmt_fn = everything() ~ list(everything() ~ "xx")
+) |>
+  apply_fmt_fn() |>
+  dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
+
+ard_with_iec_round_option[11:15, ]
+```

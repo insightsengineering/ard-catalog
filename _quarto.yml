@@ -15,11 +15,12 @@ website:
 
   page-footer:
     left: "This page is built with ❤️ and [Quarto](https://quarto.org/)."
-    background: "#0f1b66"
+    background: "#99B1C6"
 
   sidebar:
-    background: "#0f1b66"
+    background: "#99B1C6"
     logo: "images/ard-c-logo.png"
+    border: true
     pinned: true
     align: center
     tools:
@@ -29,18 +30,18 @@ website:
     style: docked
     collapse-level: 1
     contents:
-    - href: index.qmd
-      text: Home
-    - href: quarto/01-QC-DMT01.qmd
-      text: Demographics Table
-    - href: quarto/02-QC-AET02.qmd
-      text: Adverse Events Table
-    - href: quarto/03-QC-LBT01.qmd
-      text: Lab Results Table
-    - href: quarto/04-QC-TTET01.qmd
-      text: Time-to-Event Table
+        - file: index.qmd
+          text: Introduction
+        - text: "---"
+        - auto: tables
+        - text: "---"
+        - auto: other
+        - text: "---"
 
 format:
   html:
-    theme: cosmo
+    theme: [cosmo, theme.scss]
+    mainfont: "Atkinson Hyperlegible"
+    highlight-style: a11y
+
 editor: source
