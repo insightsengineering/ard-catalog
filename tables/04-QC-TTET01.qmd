@@ -19,6 +19,7 @@ library(cards)
 library(cardx)
 library(dplyr)
 library(survival)
+library(broom.helpers)
 ```
 
 ## 1. Generate a table using {chevron}
