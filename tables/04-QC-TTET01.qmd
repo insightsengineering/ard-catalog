@@ -69,7 +69,7 @@ ard_event_rates <- cards::bind_ard(
   # Earliest Contributing Event
   ard_tabulate(adtte |> dplyr::filter(is_event == TRUE), strata = c(ARM), variable = c(EVNTDESC), statistic = everything() ~ c("n"))
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 
 # Calculate Time to Event
@@ -84,7 +84,7 @@ ard_tte <- cards::bind_ard(
   # calculate range
   ard_summary(adtte, by = c(ARM), variable = c(AVAL), statistic = ~ continuous_summary_fns(c("min", "max")))
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns(fct_as_chr = TRUE)
 
 # Calculate Unstratified coxph
@@ -102,7 +102,7 @@ ard_unstrat_coxph <- ard_pairwise(
   include = ref_arm
 ) |>
   bind_ard() |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 
 # calculate the pvalue
@@ -123,7 +123,7 @@ ard_pval <- do.call(rbind, ard_pval)
 ard_surv_time <- survfit(Surv(AVAL, is_event) ~ ARM, adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit(time = 6) |>
   dplyr::filter(stat_name != "std.error") |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 ```
 
@@ -138,7 +138,7 @@ adtte$ARM <- forcats::fct_relevel(adtte$ARM, "B: Placebo", after = 0)
 ard_surv_time_diff_1 <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value")) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   filter(group1_level == "A: Drug X") |>
   mutate(group1_level = "B: Placebo")
@@ -148,7 +148,7 @@ adtte$ARM <- forcats::fct_relevel(adtte$ARM, "B: Placebo", after = 3)
 ard_surv_time_diff_2 <- survfit(Surv(AVAL, is_event) ~ ARM, data = adtte, conf.int = 0.95, conf.type = "plain") |>
   ard_survival_survfit_diff(times = 6) |>
   filter(stat_name %in% c("estimate", "conf.low", "conf.high", "p.value")) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   filter(group1_level == "C: Combination")
 

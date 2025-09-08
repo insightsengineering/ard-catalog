@@ -61,7 +61,7 @@ ard_result <- ard_summary(adlb,
   statistic =
     list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 
 
@@ -72,7 +72,7 @@ ard_overall <- ard_summary(adlb,
   statistic =
     list(everything() ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max")))
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 ```
 

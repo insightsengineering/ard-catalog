@@ -58,7 +58,7 @@ ard_result <-
     .by = "ARM",
     .overall = TRUE
   ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 
 ard_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]

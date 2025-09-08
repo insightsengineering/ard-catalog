@@ -37,7 +37,7 @@ ard_formatting <- ard_summary(ADSL,
   by = TRT01A, variables = "BMIBL",
   fmt_fn = everything() ~ list(everything() ~ "xx")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
 
 ard_formatting
@@ -82,7 +82,7 @@ ard_with_iec_round_option <- ard_summary(ADSL,
   by = TRT01A, variables = "BMIBL",
   fmt_fn = everything() ~ list(everything() ~ "xx")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
 
 ard_with_iec_round_option[11:15, ]

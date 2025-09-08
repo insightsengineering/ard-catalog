@@ -65,7 +65,7 @@ ard_result <- ard_stack_hierarchical(
   id = USUBJID,
   statistic = ~ c("n", "p")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical")
 
@@ -77,7 +77,7 @@ ard_count_result <-
     overall = TRUE,
     denominator = ADSL
   ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical_count")
 ```
