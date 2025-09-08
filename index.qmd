@@ -30,7 +30,7 @@ The workflow can be generalized into the following steps:
 4.  Compare both data.frames to QC each result in the table.
 
 ## Package Versions
-**{cards}** *v.0.5.1.9009* (development)
+**{cards}** *v.0.7.0.9002* (development)
 
 **{cardx}** *v.0.2.3*
 

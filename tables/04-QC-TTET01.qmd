@@ -45,7 +45,7 @@ head(rtables_results, n = 5)
 
 ## 3. Create comparable ARDs
 
-Using the {cards} package, we stack the functions `ard_continuous()` for the continuous variables and `ard_categorical()` for categorical variables. The default statistics calculated for each of these data types are included - these can be adapted for bespoke analyses.
+Using the {cards} package, we stack the functions `ard_summary()` for the continuous variables and `ard_tabulate()` for categorical variables. The default statistics calculated for each of these data types are included - these can be adapted for bespoke analyses.
 
 If any variable manipulation was done to the data prior to running the citril/chevron/tern/rtables commands, we suggest supplying the same data to these ARD functions, or running the same pre-processing steps to your data prior to creating ARDs to ensure variable names/levels match.
 
@@ -65,9 +65,9 @@ adtte <- proc_data$adtte |>
 # Calculate Event Rates
 ard_event_rates <- cards::bind_ard(
   # Patient Event Rates
-  ard_categorical(adtte, strata = c(ARM), variable = c(is_event), statistic = everything() ~ c("n", "p")),
+  ard_tabulate(adtte, strata = c(ARM), variable = c(is_event), statistic = everything() ~ c("n", "p")),
   # Earliest Contributing Event
-  ard_categorical(adtte |> dplyr::filter(is_event == TRUE), strata = c(ARM), variable = c(EVNTDESC), statistic = everything() ~ c("n"))
+  ard_tabulate(adtte |> dplyr::filter(is_event == TRUE), strata = c(ARM), variable = c(EVNTDESC), statistic = everything() ~ c("n"))
 ) |>
   apply_fmt_fn() |>
   unlist_ard_columns()
@@ -82,7 +82,7 @@ ard_tte <- cards::bind_ard(
     ard_survival_survfit(probs = c(0.25, 0.75)) |>
     filter(stat_name == "estimate"),
   # calculate range
-  ard_continuous(adtte, by = c(ARM), variable = c(AVAL), statistic = ~ continuous_summary_fns(c("min", "max")))
+  ard_summary(adtte, by = c(ARM), variable = c(AVAL), statistic = ~ continuous_summary_fns(c("min", "max")))
 ) |>
   apply_fmt_fn() |>
   unlist_ard_columns(fct_as_chr = TRUE)
