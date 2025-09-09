@@ -32,10 +32,10 @@ The workflow can be generalized into the following steps:
 ## Package Versions
 **{cards}** *v.0.7.0*
 
-**{cardx}** *v.0.2.3*
+**{cardx}** *v.0.3.0*
 
 **{rtables}** *v.0.6.13*
 
-**{tern}** *v.0.9.7*
+**{tern}** *v.0.9.9*
 
-**{chevron}** *v.0.2.10*
+**{chevron}** *v.0.2.12*
