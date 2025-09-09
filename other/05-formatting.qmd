@@ -33,11 +33,11 @@ result_df[, c("group1_level", "stat_name", "stat_string")]
 ```{r}
 library(cards)
 
-ard_formatting <- ard_continuous(ADSL,
+ard_formatting <- ard_summary(ADSL,
   by = TRT01A, variables = "BMIBL",
   fmt_fn = everything() ~ list(everything() ~ "xx")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
 
 ard_formatting
@@ -78,11 +78,11 @@ options(cards.round_type = "round-to-even")
 This will update the global environment to apply this rounding method in cards. Below is the same code as the earlier ARD creation steps, but generates the rounded values similar to rtables directly.
 
 ```{r}
-ard_with_iec_round_option <- ard_continuous(ADSL,
+ard_with_iec_round_option <- ard_summary(ADSL,
   by = TRT01A, variables = "BMIBL",
   fmt_fn = everything() ~ list(everything() ~ "xx")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   dplyr::filter(stat_name %in% c("N", "mean", "sd", "min", "max", "median"))
 
 ard_with_iec_round_option[11:15, ]

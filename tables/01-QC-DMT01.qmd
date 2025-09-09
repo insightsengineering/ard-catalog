@@ -40,7 +40,7 @@ rtables_result[1:10, c("group1_level", "variable", "variable_level", "stat_name"
 
 ## 3. Create a comparable ARD
 
-Using the {cards} package, we stack the functions `ard_continuous()` for the continuous variables and `ard_categorical()` for categorical variables. The default statistics calculated for each of these data types are included - these can be adapted for bespoke analyses.
+Using the {cards} package, we stack the functions `ard_summary()` for the continuous variables and `ard_tabulate()` for categorical variables. The default statistics calculated for each of these data types are included - these can be adapted for bespoke analyses.
 
 If any variable manipulation was done to the data prior to running the {citril}/{chevron}/{tern}/{rtables} commands, we suggest supplying the same data to these ARD functions, or running the same pre-processing steps to your data prior to creating ARDs to ensure variable names/levels match.
 
@@ -49,16 +49,16 @@ If any variable manipulation was done to the data prior to running the {citril}/
 ard_result <-
   ard_stack(
     chevron::syn_data$adsl,
-    ard_continuous(
+    ard_summary(
       variables = c(AGE),
       statistic = ~ continuous_summary_fns(c("N", "mean", "sd", "median", "min", "max"))
     ),
-    ard_categorical(variables = c(SEX), statistic = everything() ~ c("n", "p")),
+    ard_tabulate(variables = c(SEX), statistic = everything() ~ c("n", "p")),
     ard_missing(variables = c(SEX), statistic = everything() ~ c("N_obs")),
     .by = "ARM",
     .overall = TRUE
   ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns()
 
 ard_result[1:10, c("group1_level", "variable", "variable_level", "stat_name", "stat")]

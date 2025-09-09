@@ -45,7 +45,7 @@ rtables_result[1:6, c("group2", "group2_level", "variable", "variable_level", "s
 
 In the code below, we perform different data pre-processing for the different ARDs we want to create. 
 Then, we generate separate ARDs using the {cards} package for the different sections of the AET02 table and compare them as subsets.
-Note: If your table does not have an "overall" column, you can use the ARD creation steps at the bottom of the page using primarily `ard_categorical()`. `ard_hierarchical()` is useful here to calculate the statistics for the overall column and allows for better filtering using the "context" column.
+Note: If your table does not have an "overall" column, you can use the ARD creation steps at the bottom of the page using primarily `ard_tabulate()`. `ard_hierarchical()` is useful here to calculate the statistics for the overall column and allows for better filtering using the "context" column.
 
 ```{r}
 #| message: false
@@ -65,7 +65,7 @@ ard_result <- ard_stack_hierarchical(
   id = USUBJID,
   statistic = ~ c("n", "p")
 ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical")
 
@@ -77,7 +77,7 @@ ard_count_result <-
     overall = TRUE,
     denominator = ADSL
   ) |>
-  apply_fmt_fn() |>
+  apply_fmt_fun() |>
   unlist_ard_columns() |>
   dplyr::filter(context == "hierarchical_count")
 ```
